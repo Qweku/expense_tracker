@@ -25,8 +25,12 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addTransaction(TransactionModel transactionDetail) {
-    _transactionList.add(transactionDetail);
+  void addTransaction(AccountModel accountModel, TransactionModel transactionModel) {
+    for (var element in _accountList) {
+      if (element.accountName == accountModel.accountName) {
+        element.transactions!.add(transactionModel);
+      }
+    }
     notifyListeners();
   }
 }

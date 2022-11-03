@@ -88,9 +88,14 @@ class OverviewScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: context
-                                .watch<TransactionProvider>()
-                                .transactionList
+                        child: (context
+                                        .watch<TransactionProvider>()
+                                        .accountList
+                                        .singleWhere((element) =>
+                                            element.accountName ==
+                                            accountModel.accountName)
+                                        .transactions ??
+                                    [])
                                 .isEmpty
                             ? Center(
                                 child: Text(
@@ -103,7 +108,15 @@ class OverviewScreen extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: width * 0.01),
                                 children: List.generate(
-                                    7,
+                                    (context
+                                                .watch<TransactionProvider>()
+                                                .accountList
+                                                .singleWhere((element) =>
+                                                    element.accountName ==
+                                                    accountModel.accountName)
+                                                .transactions ??
+                                            [])
+                                        .length,
                                     (index) => Padding(
                                           padding: EdgeInsets.only(
                                               bottom: height * 0.01),
@@ -122,16 +135,28 @@ class OverviewScreen extends StatelessWidget {
                                               leading: CircleAvatar(
                                                 backgroundColor: Colors.white,
                                                 child: Icon(
-                                                  //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
-                                                  Icons.arrow_downward,
-                                                  //:Icons.arrow_upward,
-                                                  color:
-                                                     //context.watch<TransactionProvider>().transactionItem[index].isCredit!? 
-                                                     theme.primaryColorLight
-                                                     //:theme.primaryColor,
-                                                ),
+                                                    //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
+                                                    Icons.arrow_downward,
+                                                    //:Icons.arrow_upward,
+                                                    color:
+                                                        //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
+                                                        theme.primaryColorLight
+                                                    //:theme.primaryColor,
+                                                    ),
                                               ),
-                                              title: Text(context.watch<TransactionProvider>().transactionList[index].transactionItem!,
+                                              title: Text(
+                                                  (context
+                                                              .watch<
+                                                                  TransactionProvider>()
+                                                              .accountList
+                                                              .singleWhere((element) =>
+                                                                  element
+                                                                      .accountName ==
+                                                                  accountModel
+                                                                      .accountName)
+                                                              .transactions ??
+                                                          [])[index]
+                                                      .transactionItem!,
                                                   style: theme
                                                       .textTheme.headline1!
                                                       .copyWith(fontSize: 17)),
@@ -141,7 +166,8 @@ class OverviewScreen extends StatelessWidget {
                                                       .copyWith(
                                                           color: Colors.grey,
                                                           fontSize: 12)),
-                                              trailing: Text('${context.watch<TransactionProvider>().transactionList[index].price}',
+                                              trailing: Text(
+                                                  '${(context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == accountModel.accountName).transactions ?? [])[index].price}',
                                                   style: theme
                                                       .textTheme.bodyText1!
                                                       .copyWith(
@@ -232,12 +258,14 @@ class OverviewScreen extends StatelessWidget {
                 Button(
                   onTap: () {
                     TransactionModel trxn = TransactionModel(
-                        transactionItem: itemName.text,isCredit: false,
+                        transactionItem: itemName.text,
+                        isCredit: false,
                         price: double.tryParse(amount.text));
+                    accountModel.transactions!.add(trxn);
                     Provider.of<TransactionProvider>(context, listen: false)
-                        .addTransaction(trxn);
-                   
-  Navigator.pop(context);
+                        .addTransaction(accountModel, trxn);
+
+                    Navigator.pop(context);
                   },
                   width: width * 0.4,
                   buttonText: 'Add',
