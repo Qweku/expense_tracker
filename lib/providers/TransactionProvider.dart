@@ -4,19 +4,19 @@ import 'package:flutter/foundation.dart';
 class TransactionProvider with ChangeNotifier {
   AccountModel _account = AccountModel();
   List<AccountModel> _accountList = [];
-  List<TransactionModel> _transactionItem = [];
+  List<TransactionModel> _transactionList = [];
 
   AccountModel get account => _account;
   List<AccountModel> get accountList => _accountList;
-  List<TransactionModel> get transactionItem => _transactionItem;
+  List<TransactionModel> get transactionList => _transactionList;
 
   set accountList(List<AccountModel> accountList) {
     _accountList = accountList;
     notifyListeners();
   }
 
-  set transactionItem(List<TransactionModel> transactionItem) {
-    _transactionItem = transactionItem;
+  set transactionList(List<TransactionModel> transactionList) {
+    _transactionList = transactionList;
     notifyListeners();
   }
 
@@ -26,7 +26,7 @@ class TransactionProvider with ChangeNotifier {
   }
 
   void addTransaction(TransactionModel transactionDetail) {
-    _transactionItem.add(transactionDetail);
+    _transactionList.add(transactionDetail);
     notifyListeners();
   }
 }

@@ -325,7 +325,7 @@ class AccountCard extends StatelessWidget {
                     children: [
                       Text('GHS', style: headline2),
                       Text(balance, style: headline2.copyWith(fontSize: 50)),
-                      Text('.50', style: headline2),
+                      //Text('.50', style: headline2),
                     ],
                   ),
                   SizedBox(

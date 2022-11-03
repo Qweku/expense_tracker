@@ -4,14 +4,16 @@ import 'dart:ui';
 import 'package:expense_tracker/components/button_widget.dart';
 import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/models/Models.dart';
+import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../components/textField-widget.dart';
 
 class OverviewScreen extends StatelessWidget {
   AccountModel accountModel;
-   OverviewScreen({super.key,required this.accountModel});
+  OverviewScreen({super.key, required this.accountModel});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class OverviewScreen extends StatelessWidget {
                               style: theme.textTheme.headline1!
                                   .copyWith(color: Colors.grey)),
                           Text(
-                            "Account Name",
+                            accountModel.accountName!,
                             style: theme.textTheme.headline1!.copyWith(
                               fontSize: 30,
                             ),
@@ -60,7 +62,9 @@ class OverviewScreen extends StatelessWidget {
                           SizedBox(
                             height: height * 0.05,
                           ),
-                          BalanceCard(theme: theme),
+                          BalanceCard(
+                              balance: '${accountModel.balance!}',
+                              theme: theme),
                         ],
                       ),
                       SizedBox(
@@ -84,49 +88,69 @@ class OverviewScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: ListView(
-                          physics: const BouncingScrollPhysics(),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: width * 0.01),
-                          children: List.generate(
-                              7,
-                              (index) => Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: height * 0.01),
-                                    child: Container(
-                                      padding: EdgeInsets.all(width * 0.01),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          border:
-                                              Border.all(color: Colors.white),
-                                          color: //theme.primaryColorLight
-                                              Colors.white.withOpacity(0.5)),
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          child: Icon(
-                                            Icons.arrow_downward,
-                                            color: theme.primaryColorLight,
+                        child: context
+                                .watch<TransactionProvider>()
+                                .transactionList
+                                .isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No Accounts',
+                                  style: headline1,
+                                ),
+                              )
+                            : ListView(
+                                physics: const BouncingScrollPhysics(),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: width * 0.01),
+                                children: List.generate(
+                                    7,
+                                    (index) => Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: height * 0.01),
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.all(width * 0.01),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                    color: Colors.white),
+                                                color: //theme.primaryColorLight
+                                                    Colors.white
+                                                        .withOpacity(0.5)),
+                                            child: ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundColor: Colors.white,
+                                                child: Icon(
+                                                  //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
+                                                  Icons.arrow_downward,
+                                                  //:Icons.arrow_upward,
+                                                  color:
+                                                     //context.watch<TransactionProvider>().transactionItem[index].isCredit!? 
+                                                     theme.primaryColorLight
+                                                     //:theme.primaryColor,
+                                                ),
+                                              ),
+                                              title: Text(context.watch<TransactionProvider>().transactionList[index].transactionItem!,
+                                                  style: theme
+                                                      .textTheme.headline1!
+                                                      .copyWith(fontSize: 17)),
+                                              subtitle: Text(today,
+                                                  style: theme
+                                                      .textTheme.headline1!
+                                                      .copyWith(
+                                                          color: Colors.grey,
+                                                          fontSize: 12)),
+                                              trailing: Text('${context.watch<TransactionProvider>().transactionList[index].price}',
+                                                  style: theme
+                                                      .textTheme.bodyText1!
+                                                      .copyWith(
+                                                          color: theme
+                                                              .primaryColorLight)),
+                                            ),
                                           ),
-                                        ),
-                                        title: Text('Food',
-                                            style: theme.textTheme.headline1!
-                                                .copyWith(fontSize: 17)),
-                                        subtitle: Text(today,
-                                            style: theme.textTheme.headline1!
-                                                .copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 12)),
-                                        trailing: Text('-GHS 20.00',
-                                            style: theme.textTheme.bodyText1!
-                                                .copyWith(
-                                                    color: theme
-                                                        .primaryColorLight)),
-                                      ),
-                                    ),
-                                  )),
-                        ),
+                                        )),
+                              ),
                       )
                     ],
                   ),
@@ -138,6 +162,8 @@ class OverviewScreen extends StatelessWidget {
   }
 
   _addExpense(context) {
+    TextEditingController itemName = TextEditingController();
+    TextEditingController amount = TextEditingController();
     var theme = Theme.of(context);
     return showDialog<bool>(
         context: context,
@@ -178,6 +204,7 @@ class OverviewScreen extends StatelessWidget {
 
                     SizedBox(height: height * 0.05),
                     CustomTextField(
+                      controller: itemName,
                       borderColor: Colors.grey,
                       style: bodyText1,
                       hintText: 'Item',
@@ -188,6 +215,7 @@ class OverviewScreen extends StatelessWidget {
                     ),
                     SizedBox(height: height * 0.03),
                     CustomTextField(
+                      controller: amount,
                       keyboard: TextInputType.number,
                       borderColor: Colors.grey,
                       hintText: 'Amout',
@@ -202,6 +230,15 @@ class OverviewScreen extends StatelessWidget {
               ),
               actions: [
                 Button(
+                  onTap: () {
+                    TransactionModel trxn = TransactionModel(
+                        transactionItem: itemName.text,isCredit: false,
+                        price: double.tryParse(amount.text));
+                    Provider.of<TransactionProvider>(context, listen: false)
+                        .addTransaction(trxn);
+                   
+  Navigator.pop(context);
+                  },
                   width: width * 0.4,
                   buttonText: 'Add',
                   color: primaryColor,
@@ -212,9 +249,11 @@ class OverviewScreen extends StatelessWidget {
 }
 
 class BalanceCard extends StatelessWidget {
+  final String balance;
   const BalanceCard({
     Key? key,
     required this.theme,
+    required this.balance,
   }) : super(key: key);
 
   final ThemeData theme;
@@ -264,10 +303,10 @@ class BalanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('GHS', style: theme.textTheme.headline2),
-                    Text('2,030',
+                    Text(balance,
                         style:
                             theme.textTheme.headline2!.copyWith(fontSize: 60)),
-                    Text('.50', style: theme.textTheme.headline2),
+                    //Text('.50', style: theme.textTheme.headline2),
                   ],
                 ),
               ],
