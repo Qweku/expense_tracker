@@ -261,7 +261,7 @@ class OverviewScreen extends StatelessWidget {
                         transactionItem: itemName.text,
                         isCredit: false,
                         price: double.tryParse(amount.text));
-                    accountModel.transactions!.add(trxn);
+                    // accountModel.transactions!.add(trxn);
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addTransaction(accountModel, trxn);
 

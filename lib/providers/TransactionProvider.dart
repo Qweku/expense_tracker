@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expense_tracker/models/Models.dart';
 import 'package:flutter/foundation.dart';
 
@@ -25,12 +27,13 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addTransaction(AccountModel accountModel, TransactionModel transactionModel) {
+  void addTransaction(
+      AccountModel accountModel, TransactionModel transactionModel) {
     for (var element in _accountList) {
       if (element.accountName == accountModel.accountName) {
-        element.transactions!.add(transactionModel);
+       (element.transactions  ??= []).add(transactionModel);
       }
-    }
+     }
     notifyListeners();
   }
 }

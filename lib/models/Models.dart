@@ -1,7 +1,7 @@
 class AccountModel {
   final double? balance;
   final String? accountName;
-   final List<TransactionModel>? transactions;
+  List<TransactionModel>? transactions = [];
   AccountModel({this.accountName, this.balance, this.transactions});
 
   double get remainingBalance {
