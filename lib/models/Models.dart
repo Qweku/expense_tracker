@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class AccountModel {
   final double? balance;
   final String? accountName;

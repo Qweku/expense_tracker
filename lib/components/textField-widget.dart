@@ -105,7 +105,7 @@ class _CustomDropDownListState extends State<CustomDropDownList> {
   String? itemValue;
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 50,
@@ -129,8 +129,8 @@ class _CustomDropDownListState extends State<CustomDropDownList> {
         },
         items: widget.listItems!.map((location) {
           return DropdownMenuItem(
-            child: Text(location, maxLines: 2),
             value: location,
+            child: Text(location, maxLines: 2),
           );
         }).toList(),
       ),

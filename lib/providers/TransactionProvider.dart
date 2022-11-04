@@ -1,14 +1,14 @@
-import 'dart:developer';
+
 
 import 'package:expense_tracker/models/Models.dart';
 import 'package:flutter/foundation.dart';
 
 class TransactionProvider with ChangeNotifier {
-  AccountModel _account = AccountModel();
+ 
   List<AccountModel> _accountList = [];
   List<TransactionModel> _transactionList = [];
 
-  AccountModel get account => _account;
+
   List<AccountModel> get accountList => _accountList;
   List<TransactionModel> get transactionList => _transactionList;
 

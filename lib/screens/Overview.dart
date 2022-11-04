@@ -29,157 +29,161 @@ class OverviewScreen extends StatelessWidget {
           width: width,
           child: Stack(
             children: [
-              Image.asset(
-                'assets/splash.gif',
-                fit: BoxFit.cover,
-                height: height,
-                width: width,
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                  color: Colors.white.withOpacity(0.9),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: height * 0.15,
-                          ),
-                          Text("Expenses for",
-                              style: theme.textTheme.headline1!
-                                  .copyWith(color: Colors.grey)),
-                          Text(
-                            accountModel.accountName!,
-                            style: theme.textTheme.headline1!.copyWith(
-                              fontSize: 30,
-                            ),
-                          ),
-                          SizedBox(
-                            height: height * 0.05,
-                          ),
-                          BalanceCard(
-                              balance: '${accountModel.balance!}',
-                              theme: theme),
-                        ],
-                      ),
-                      SizedBox(
-                        height: height * 0.05,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: width * 0.05),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Activity',
-                              style: theme.textTheme.headline1!
-                                  .copyWith(color: Colors.grey),
-                            )),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                        child: Divider(
-                          color: const Color.fromARGB(255, 224, 224, 224),
-                          height: height * 0.03,
+              Column(
+              children: [
+                Container(
+                  height: height * 0.35,
+                  width: width,
+                  color: primaryColor,
+                ),
+                Expanded(
+                  child: Container(color: primaryColorLight),
+                ),
+              ],
+            ),
+          
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: height * 0.15,
                         ),
+                        Text("Expenses for",
+                            style: theme.textTheme.headline1!
+                                .copyWith(color:theme.primaryColorLight )),
+                        Text(
+                          accountModel.accountName!,
+                          style: theme.textTheme.headline2!.copyWith(
+                            fontSize: 30,
+                          ),
+                        ),
+                        SizedBox(
+                          height: height * 0.05,
+                        ),
+                        BalanceCard(
+                            balance: '${accountModel.remainingBalance}',
+                            theme: theme),
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * 0.05,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: width * 0.01),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Activity',
+                            style: theme.textTheme.headline1!
+                                .copyWith(color: primaryColor),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+                      child: Divider(
+                        color: const Color.fromARGB(255, 224, 224, 224),
+                        height: height * 0.03,
                       ),
-                      Expanded(
-                        child: (context
-                                        .watch<TransactionProvider>()
-                                        .accountList
-                                        .singleWhere((element) =>
-                                            element.accountName ==
-                                            accountModel.accountName)
-                                        .transactions ??
-                                    [])
-                                .isEmpty
-                            ? Center(
-                                child: Text(
-                                  'No Accounts',
-                                  style: headline1,
-                                ),
-                              )
-                            : ListView(
-                                physics: const BouncingScrollPhysics(),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.01),
-                                children: List.generate(
-                                    (context
-                                                .watch<TransactionProvider>()
-                                                .accountList
-                                                .singleWhere((element) =>
-                                                    element.accountName ==
-                                                    accountModel.accountName)
-                                                .transactions ??
-                                            [])
-                                        .length,
-                                    (index) => Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: height * 0.01),
-                                          child: Container(
-                                            padding:
-                                                EdgeInsets.all(width * 0.01),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                border: Border.all(
-                                                    color: Colors.white),
-                                                color: //theme.primaryColorLight
-                                                    Colors.white
-                                                        .withOpacity(0.5)),
-                                            child: ListTile(
-                                              leading: CircleAvatar(
-                                                backgroundColor: Colors.white,
-                                                child: Icon(
-                                                    //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
-                                                    Icons.arrow_downward,
-                                                    //:Icons.arrow_upward,
-                                                    color:
-                                                        //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
-                                                        theme.primaryColorLight
-                                                    //:theme.primaryColor,
-                                                    ),
-                                              ),
-                                              title: Text(
-                                                  (context
-                                                              .watch<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  accountModel
-                                                                      .accountName)
-                                                              .transactions ??
-                                                          [])[index]
-                                                      .transactionItem!,
-                                                  style: theme
-                                                      .textTheme.headline1!
-                                                      .copyWith(fontSize: 17)),
-                                              subtitle: Text(today,
-                                                  style: theme
-                                                      .textTheme.headline1!
-                                                      .copyWith(
-                                                          color: Colors.grey,
-                                                          fontSize: 12)),
-                                              trailing: Text(
-                                                  '${(context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == accountModel.accountName).transactions ?? [])[index].price}',
-                                                  style: theme
-                                                      .textTheme.bodyText1!
-                                                      .copyWith(
-                                                          color: theme
-                                                              .primaryColorLight)),
-                                            ),
-                                          ),
-                                        )),
+                    ),
+                    Expanded(
+                      child: (context
+                                      .watch<TransactionProvider>()
+                                      .accountList
+                                      .singleWhere((element) =>
+                                          element.accountName ==
+                                          accountModel.accountName)
+                                      .transactions ??
+                                  [])
+                              .isEmpty
+                          ? Center(
+                              child: Text(
+                                'No Accounts',
+                                style: headline1,
                               ),
-                      )
-                    ],
-                  ),
+                            )
+                          : ListView(
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: width * 0.01),
+                              children: List.generate(
+                                  (context
+                                              .watch<TransactionProvider>()
+                                              .accountList
+                                              .singleWhere((element) =>
+                                                  element.accountName ==
+                                                  accountModel.accountName)
+                                              .transactions ??
+                                          [])
+                                      .length,
+                                  (index) => Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: height * 0.01),
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.all(width * 0.01),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                  color: Colors.white),
+                                              color: //theme.primaryColorLight
+                                                  Colors.white
+                                                      .withOpacity(0.5)),
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              child: Icon(
+                                                  //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
+                                                  Icons.arrow_downward,
+                                                  //:Icons.arrow_upward,
+                                                  color:
+                                                      //context.watch<TransactionProvider>().transactionItem[index].isCredit!?
+                                                      theme.primaryColorLight
+                                                  //:theme.primaryColor,
+                                                  ),
+                                            ),
+                                            title: Text(
+                                                (context
+                                                            .watch<
+                                                                TransactionProvider>()
+                                                            .accountList
+                                                            .singleWhere((element) =>
+                                                                element
+                                                                    .accountName ==
+                                                                accountModel
+                                                                    .accountName)
+                                                            .transactions ??
+                                                        [])[index]
+                                                    .transactionItem!,
+                                                style: theme
+                                                    .textTheme.headline1!
+                                                    .copyWith(fontSize: 17)),
+                                            subtitle: Text(today,
+                                                style: theme
+                                                    .textTheme.headline1!
+                                                    .copyWith(
+                                                        color: Colors.grey,
+                                                        fontSize: 12)),
+                                            trailing: Text(
+                                                '-${(context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == accountModel.accountName).transactions ?? [])[index].price}',
+                                                style: theme
+                                                    .textTheme.bodyText1!
+                                                    .copyWith(fontSize:17,
+                                                        color: theme
+                                                            .primaryColor)),
+                                          ),
+                                        ),
+                                      )),
+                            ),
+                    )
+                  ],
                 ),
               ),
             ],
@@ -264,7 +268,7 @@ class OverviewScreen extends StatelessWidget {
                     // accountModel.transactions!.add(trxn);
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addTransaction(accountModel, trxn);
-
+                    accountModel.remainingBalance;
                     Navigator.pop(context);
                   },
                   width: width * 0.4,
@@ -289,23 +293,26 @@ class BalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(40),
+      // borderRadius: BorderRadius.circular(40),
       child: Container(
         height: height * 0.2,
         width: width * 0.9,
-        decoration: BoxDecoration(color: theme.primaryColor),
+        decoration: BoxDecoration(
+           borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: primaryColorLight),
+          color: theme.primaryColor),
         child: Stack(
           children: [
             Positioned(
-                top: -height * 0.02,
-                left: -width * 0.05,
+                top: height * 0.02,
+                left: width * 0.05,
                 child: CircleAvatar(
-                    radius: 60, backgroundColor: theme.primaryColorLight)),
+                    radius: 30, backgroundColor: theme.primaryColorLight)),
             Positioned(
-                bottom: -height * 0.02,
-                right: -width * 0.05,
+                bottom: height * 0.02,
+                right: width * 0.05,
                 child: CircleAvatar(
-                  radius: 60,
+                  radius: 40,
                   backgroundColor: theme.primaryColorLight,
                 )),
             Positioned(
