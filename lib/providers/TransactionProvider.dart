@@ -1,13 +1,11 @@
-
-
 import 'package:expense_tracker/models/Models.dart';
 import 'package:flutter/foundation.dart';
+import 'package:localstorage/localstorage.dart';
 
 class TransactionProvider with ChangeNotifier {
- 
+  LocalStorage storage = LocalStorage('acc');
   List<AccountModel> _accountList = [];
   List<TransactionModel> _transactionList = [];
-
 
   List<AccountModel> get accountList => _accountList;
   List<TransactionModel> get transactionList => _transactionList;
@@ -31,9 +29,13 @@ class TransactionProvider with ChangeNotifier {
       AccountModel accountModel, TransactionModel transactionModel) {
     for (var element in _accountList) {
       if (element.accountName == accountModel.accountName) {
-       (element.transactions  ??= []).add(transactionModel);
+        (element.transactions ??= []).add(transactionModel);
       }
-     }
+    }
     notifyListeners();
+  }
+
+  void saveToStorage(AccountModel accModel) {
+    storage.setItem('acc', accModel.toJSONEncodable());
   }
 }

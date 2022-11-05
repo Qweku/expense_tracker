@@ -10,23 +10,44 @@ class AccountModel {
     double dr = 0;
     double cr = 0;
     for (var element in (transactions ?? [])) {
-      if (element.isCredit == false) {
+      if (element.isCredit == 'expense') {
         dr += element.price;
       }
     }
     for (var element in (transactions ?? [])) {
-      if (element.isCredit) {
+      if (element.isCredit=='income') {
         cr += element.price;
       }
     }
     return (balance ?? 0) + cr - dr;
   }
+
+  toJSONEncodable() {
+    Map<String, dynamic> accItem = {};
+    accItem['accountName'] = accountName;
+    accItem['balance'] = balance;
+    accItem['transactions'] = 
+    transactions!.map((e) {
+      return e.toJSONEncodable();
+    }).toList();
+
+    return accItem;
+  }
 }
 
 class TransactionModel {
-  final bool? isCredit;
+  final String? isCredit;
   double? price;
   final String? transactionItem, date;
   TransactionModel(
       {this.date, this.price, this.transactionItem, this.isCredit});
+
+  toJSONEncodable() {
+    Map<String, dynamic> trxnItem = {};
+    trxnItem['isCredit'] = isCredit;
+    trxnItem['price'] = price;
+    trxnItem['transactionItem'] = transactionItem;
+
+    return trxnItem;
+  }
 }

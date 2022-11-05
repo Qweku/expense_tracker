@@ -4,17 +4,32 @@ import 'package:expense_tracker/components/button_widget.dart';
 import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/components/notificationButton.dart';
 import 'package:expense_tracker/components/textField-widget.dart';
+import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
-class AccountList extends StatelessWidget {
+class AccountList extends StatefulWidget {
   const AccountList({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<AccountList> createState() => _AccountListState();
+}
+
+class _AccountListState extends State<AccountList> {
+  TextEditingController accountName = TextEditingController();
+  TextEditingController balance = TextEditingController();
+  @override
+  void initState() {
+    GSheetsAPI().countSheets();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,50 +96,36 @@ class AccountList extends StatelessWidget {
                       height: height * 0.05,
                     ),
                     Expanded(
-                      child: context
-                              .watch<TransactionProvider>()
-                              .accountList
-                              .isEmpty
+                      child: GSheetsAPI.numberOfSheets == 0
                           ? Center(
                               child: Text(
                                 'No Accounts',
                                 style: headline1,
                               ),
                             )
-                          : ListView(
-                              physics: const BouncingScrollPhysics(),
-                              children: List.generate(
-                                  context
-                                      .watch<TransactionProvider>()
-                                      .accountList
-                                      .length,
-                                  (index) => AccountCard(
-                                        accountName: context
-                                            .watch<TransactionProvider>()
-                                            .accountList[index]
-                                            .accountName!,
-                                        balance:
-                                            '${context.watch<TransactionProvider>().accountList[index].balance!}',
-                                        onTap: () {
-                                          AccountModel accModel = AccountModel(
-                                            accountName: context
-                                                .read<TransactionProvider>()
-                                                .accountList[index]
-                                                .accountName!,
-                                            balance: context
-                                                .read<TransactionProvider>()
-                                                .accountList[index]
-                                                .balance!,
-                                          );
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      OverviewScreen(
-                                                        accountModel: accModel,
-                                                      )));
-                                        },
-                                      )),
+                          : RefreshIndicator(
+                              onRefresh: _refresh,
+                              child: ListView(
+                                physics: const BouncingScrollPhysics(),
+                                children: List.generate(
+                                    GSheetsAPI.numberOfSheets,
+                                    (index) => AccountCard(
+                                          accountName:
+                                              GSheetsAPI.worksheet!.title,
+                                          balance:
+                                              '${GSheetsAPI.calculateIncome()}',
+                                          onTap: () {
+                                            
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                      const  OverviewScreen(
+                                                          
+                                                        )));
+                                          },
+                                        )),
+                              ),
                             ),
                     )
                   ]),
@@ -133,6 +134,10 @@ class AccountList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future _refresh() async {
+    GSheetsAPI.numberOfSheets;
   }
 
   _backButton(context) {
@@ -179,8 +184,6 @@ class AccountList extends StatelessWidget {
   }
 
   _addAccount(context) {
-    TextEditingController accountName = TextEditingController();
-    TextEditingController balance = TextEditingController();
     var theme = Theme.of(context);
     return showDialog<bool>(
         context: context,
@@ -251,8 +254,16 @@ class AccountList extends StatelessWidget {
                     AccountModel accountModel = AccountModel(
                         accountName: accountName.text,
                         balance: double.tryParse(balance.text));
-                    Provider.of<TransactionProvider>(context, listen: false)
-                        .addAccount(accountModel);
+                    // Provider.of<TransactionProvider>(context, listen: false)
+                    //     .addAccount(accountModel);
+                 
+                    GSheetsAPI().createSheet(accountName.text);
+                    GSheetsAPI().countSheets();
+                   print(
+                          'Total Sheet = ${GSheetsAPI.numberOfSheets}',
+                        );
+                    setState(() {});
+
                     Navigator.pop(context);
                   },
                   width: width * 0.4,
