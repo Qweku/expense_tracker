@@ -103,29 +103,40 @@ class _AccountListState extends State<AccountList> {
                                 style: headline1,
                               ),
                             )
-                          : RefreshIndicator(
-                              onRefresh: _refresh,
-                              child: ListView(
-                                physics: const BouncingScrollPhysics(),
-                                children: List.generate(
-                                    GSheetsAPI.numberOfSheets,
-                                    (index) => AccountCard(
-                                          accountName:
-                                              GSheetsAPI.worksheet!.title,
-                                          balance:
-                                              '${GSheetsAPI.calculateIncome()}',
-                                          onTap: () {
-                                            
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                      const  OverviewScreen(
-                                                          
-                                                        )));
-                                          },
-                                        )),
-                              ),
+                          : ListView(
+                              physics: const BouncingScrollPhysics(),
+                              children: List.generate(
+                                  context
+                                      .watch<TransactionProvider>()
+                                      .accountList
+                                      .length,
+                                  (index) => AccountCard(
+                                        accountName: context
+                                            .watch<TransactionProvider>()
+                                            .accountList[index]
+                                            .accountName!,
+                                        balance:
+                                            '${context.watch<TransactionProvider>().accountList[index].remainingBalance}',
+                                        onTap: () {
+                                          AccountModel accModel = AccountModel(
+                                            accountName: context
+                                                .read<TransactionProvider>()
+                                                .accountList[index]
+                                                .accountName!,
+                                            balance: context
+                                                .read<TransactionProvider>()
+                                                .accountList[index]
+                                                .balance!,
+                                          );
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OverviewScreen(
+                                                        accountModel: accModel,
+                                                      )));
+                                        },
+                                      )),
                             ),
                     )
                   ]),

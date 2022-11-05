@@ -14,8 +14,9 @@ import 'package:provider/provider.dart';
 import '../components/textField-widget.dart';
 
 class OverviewScreen extends StatefulWidget {
-  //AccountModel accountModel;
-  const OverviewScreen({
+  AccountModel? accountModel;
+    OverviewScreen({
+    this.accountModel,
     super.key,
   });
 

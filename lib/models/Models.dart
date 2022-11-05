@@ -9,14 +9,14 @@ class AccountModel {
   double get remainingBalance {
     double dr = 0;
     double cr = 0;
-    for (var element in (transactions ?? [])) {
-      if (element.isCredit == 'expense') {
-        dr += element.price;
+    for (var element in (transactions ?? <TransactionModel>[])) {
+      if (element.isCredit == false) {
+        dr += (element.price ??= 0);
       }
     }
-    for (var element in (transactions ?? [])) {
-      if (element.isCredit=='income') {
-        cr += element.price;
+    for (var element in (transactions ?? <TransactionModel>[])) {
+      if (element.isCredit == true) {
+        cr += (element.price ??= 0);
       }
     }
     return (balance ?? 0) + cr - dr;
