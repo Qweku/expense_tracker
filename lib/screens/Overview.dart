@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
@@ -8,7 +10,6 @@ import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../components/textField-widget.dart';
@@ -45,6 +46,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
   Option? _option;
 
   @override
+   void initState() {
+   
+    _addTrxn();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (GSheetsAPI.loading == true && timerHasStarted == false) {
       startLoading();
@@ -53,7 +61,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _addExpense(context),
+          onPressed: () => _addTrxn(),
           child: const Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
         ),
@@ -198,9 +206,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
         ));
   }
 
-  _addExpense(context) {
-    var theme = Theme.of(context);
+  _addTrxn()async {
+    await Future.delayed(const Duration(milliseconds: 100));
+   
     return showDialog<bool>(
+      barrierDismissible: false,
         context: context,
         builder: (c) => StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
@@ -212,10 +222,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text('Add Transaction',
-                          style: theme.textTheme.bodyText1!.copyWith(
+                          style: bodyText1.copyWith(
                               letterSpacing: 2,
                               fontSize: 20,
-                              color: theme.primaryColor)),
+                              color: primaryColor)),
                       SizedBox(height: height * 0.01),
                       //Divider
                       Row(
@@ -267,7 +277,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         children: [
                           Expanded(
                             child: RadioListTile<Option>(
-                              activeColor: theme.primaryColorDark,
+                              activeColor: primaryColor,
                               title: Text('Expense', style: bodyText1),
                               value: Option.expense,
                               groupValue: _option,
@@ -281,7 +291,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           ),
                           Expanded(
                             child: RadioListTile<Option>(
-                              activeColor: theme.primaryColorDark,
+                              activeColor: primaryColor,
                               title: Text('Income', style: bodyText1),
                               value: Option.income,
                               groupValue: _option,
@@ -314,7 +324,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                   const Color.fromARGB(255, 255, 17, 1),
                               content: Text('Field Required',
                                   textAlign: TextAlign.center,
-                                  style: theme.textTheme.bodyText2),
+                                  style: bodyText2),
                               duration: const Duration(milliseconds: 1500),
                               behavior: SnackBarBehavior.floating,
                               shape: const StadiumBorder()),

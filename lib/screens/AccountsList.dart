@@ -25,9 +25,103 @@ class AccountList extends StatefulWidget {
 class _AccountListState extends State<AccountList> {
   TextEditingController accountName = TextEditingController();
   TextEditingController balance = TextEditingController();
+
+  _addAccount() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    return showDialog<bool>(
+      barrierDismissible: false,
+        context: context,
+        builder: (c) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              content: SizedBox(
+                height: height * 0.35,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Add Account',
+                        style: bodyText1.copyWith(
+                            letterSpacing: 2,
+                            fontSize: 20,
+                            color: primaryColor)),
+                    SizedBox(height: height * 0.01),
+                    //Divider
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: width * 0.2,
+                          child: Divider(color: primaryColor),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: height * 0.01),
+                          child: Icon(Icons.edit,
+                              color: primaryColorLight, size: 20),
+                        ),
+                        SizedBox(
+                          width: width * 0.2,
+                          child: Divider(color: primaryColor),
+                        )
+                      ],
+                    ),
+
+                    SizedBox(height: height * 0.05),
+                    CustomTextField(
+                      controller: accountName,
+                      borderColor: Colors.grey,
+                      style: bodyText1,
+                      hintText: 'Account Name',
+                      prefixIcon: Icon(
+                        Icons.credit_card,
+                        color: primaryColorLight,
+                      ),
+                    ),
+                    SizedBox(height: height * 0.03),
+                    CustomTextField(
+                      controller: balance,
+                      keyboard: TextInputType.number,
+                      borderColor: Colors.grey,
+                      hintText: 'Balance',
+                      style: bodyText1,
+                      prefixIcon: Icon(
+                        Icons.monetization_on,
+                        color: primaryColorLight,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              actions: [
+                Button(
+                  onTap: () {
+                    AccountModel accountModel = AccountModel(
+                        accountName: accountName.text,
+                        balance: double.tryParse(balance.text));
+                    Provider.of<TransactionProvider>(context, listen: false)
+                        .addAccount(accountModel);
+
+                    //   GSheetsAPI().createSheet(accountName.text);
+                    //   GSheetsAPI().countSheets();
+                    //  print(
+                    //         'Total Sheet = ${GSheetsAPI.numberOfSheets}',
+                    //       );
+                    //   setState(() {});
+
+                    Navigator.pop(context);
+                  },
+                  width: width * 0.4,
+                  buttonText: 'Add',
+                  color: primaryColor,
+                )
+              ],
+            ));
+  }
+
   @override
   void initState() {
     GSheetsAPI().countSheets();
+    _addAccount();
     super.initState();
   }
 
@@ -37,7 +131,7 @@ class _AccountListState extends State<AccountList> {
       onWillPop: () => _backButton(context),
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _addAccount(context),
+          onPressed: () => _addAccount(),
           child: Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
         ),
@@ -193,97 +287,6 @@ class _AccountListState extends State<AccountList> {
                 TextButton(
                     onPressed: () => Navigator.pop(c, false),
                     child: const Text("No"))
-              ],
-            ));
-  }
-
-  _addAccount(context) {
-    var theme = Theme.of(context);
-    return showDialog<bool>(
-        context: context,
-        builder: (c) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              content: SizedBox(
-                height: height * 0.35,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Add Account',
-                        style: theme.textTheme.bodyText1!.copyWith(
-                            letterSpacing: 2,
-                            fontSize: 20,
-                            color: theme.primaryColor)),
-                    SizedBox(height: height * 0.01),
-                    //Divider
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: width * 0.2,
-                          child: Divider(color: primaryColor),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: height * 0.01),
-                          child: Icon(Icons.edit,
-                              color: primaryColorLight, size: 20),
-                        ),
-                        SizedBox(
-                          width: width * 0.2,
-                          child: Divider(color: primaryColor),
-                        )
-                      ],
-                    ),
-
-                    SizedBox(height: height * 0.05),
-                    CustomTextField(
-                      controller: accountName,
-                      borderColor: Colors.grey,
-                      style: bodyText1,
-                      hintText: 'Account Name',
-                      prefixIcon: Icon(
-                        Icons.credit_card,
-                        color: primaryColorLight,
-                      ),
-                    ),
-                    SizedBox(height: height * 0.03),
-                    CustomTextField(
-                      controller: balance,
-                      keyboard: TextInputType.number,
-                      borderColor: Colors.grey,
-                      hintText: 'Balance',
-                      style: bodyText1,
-                      prefixIcon: Icon(
-                        Icons.monetization_on,
-                        color: primaryColorLight,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              actions: [
-                Button(
-                  onTap: () {
-                    AccountModel accountModel = AccountModel(
-                        accountName: accountName.text,
-                        balance: double.tryParse(balance.text));
-                    Provider.of<TransactionProvider>(context, listen: false)
-                        .addAccount(accountModel);
-
-                    //   GSheetsAPI().createSheet(accountName.text);
-                    //   GSheetsAPI().countSheets();
-                    //  print(
-                    //         'Total Sheet = ${GSheetsAPI.numberOfSheets}',
-                    //       );
-                    //   setState(() {});
-
-                    Navigator.pop(context);
-                  },
-                  width: width * 0.4,
-                  buttonText: 'Add',
-                  color: primaryColor,
-                )
               ],
             ));
   }
