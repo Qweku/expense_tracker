@@ -7,6 +7,8 @@ import 'package:expense_tracker/components/textField-widget.dart';
 import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
+import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
+import 'package:expense_tracker/screens/Notification/notifications.dart';
 import 'package:expense_tracker/screens/Overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,8 +102,6 @@ class _AccountListState extends State<AccountList> {
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addAccount(accountModel);
 
-                   
-
                     Navigator.pop(context);
                   },
                   width: width * 0.4,
@@ -111,10 +111,19 @@ class _AccountListState extends State<AccountList> {
               ],
             ));
   }
+  onNotificationLower(ReceivedNotification receivedNotification) {}
+  onNotificationClick(String payload) {
+    // Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //   return NotificationScreen();
+    // }));
+  }
 
   @override
   void initState() {
     _addAccount();
+    notificationPlugin.setListenerForLowerVersions(onNotificationLower);
+    notificationPlugin.setOnNotificationClick(onNotificationClick);
+
     super.initState();
   }
 
@@ -134,7 +143,18 @@ class _AccountListState extends State<AccountList> {
           actions: [
             Padding(
               padding: EdgeInsets.only(right: width * 0.03),
-              child: const NotificationIconButton(quantity: 0),
+              child: NotificationIconButton(
+                quantity: context
+                    .watch<TransactionProvider>()
+                    .notificationList
+                    .length,
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NotificationScreen()));
+                },
+              ),
             )
           ],
         ),
@@ -236,7 +256,6 @@ class _AccountListState extends State<AccountList> {
       ),
     );
   }
-
 
   _backButton(context) {
     var theme = Theme.of(context);

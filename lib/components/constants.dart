@@ -10,13 +10,20 @@ Color primaryColorDark = const Color.fromARGB(255, 0, 4, 51);
 Color primaryColorLight = const Color.fromARGB(255, 179, 170, 97);
 
 TextStyle headline1 = const TextStyle(fontSize: 25, color: Colors.black);
-TextStyle headline2 = const TextStyle(fontSize: 25, color: Color.fromARGB(255, 255, 255, 255));
-TextStyle bodyText1 = const TextStyle(fontSize: 14, color: Color.fromARGB(255, 0, 0, 0));
-TextStyle bodyText2 = const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255));
+TextStyle headline2 =
+    const TextStyle(fontSize: 25, color: Color.fromARGB(255, 255, 255, 255));
+TextStyle bodyText1 =
+    const TextStyle(fontSize: 14, color: Color.fromARGB(255, 0, 0, 0));
+TextStyle bodyText2 =
+    const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255));
 
 final int day = DateTime.now().day;
 final int month = DateTime.now().month;
 final int year = DateTime.now().year;
+final int hour = DateTime.now().hour;
+final int min = DateTime.now().minute;
+
+final String currentTime = "$hour:$min";
 
 final String today = "$day ${months[month - 1]} $year";
 
@@ -35,8 +42,11 @@ List<String> months = [
   'Dec'
 ];
 
-
 extension StringExtension on String {
-     String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
-  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

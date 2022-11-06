@@ -1,19 +1,27 @@
 // ignore_for_file: file_names
 
 import 'package:expense_tracker/models/Models.dart';
-import 'package:flutter/foundation.dart';
+import 'package:expense_tracker/models/NotificationModel.dart';
+import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
 class TransactionProvider with ChangeNotifier {
   LocalStorage storage = LocalStorage('acc');
+  List<NotificationModel> _notificationList = [];
   List<AccountModel> _accountList = [];
   List<TransactionModel> _transactionList = [];
 
   List<AccountModel> get accountList => _accountList;
   List<TransactionModel> get transactionList => _transactionList;
+  List<NotificationModel> get notificationList => _notificationList;
 
   set accountList(List<AccountModel> accountList) {
     _accountList = accountList;
+    notifyListeners();
+  }
+
+  set notificationList(List<NotificationModel> notificationList) {
+    _notificationList = notificationList;
     notifyListeners();
   }
 
@@ -37,5 +45,7 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  
+  void addNotification(NotificationModel notificationModel) {
+    _notificationList.add(notificationModel);
+  }
 }

@@ -6,7 +6,9 @@ import 'package:expense_tracker/components/button_widget.dart';
 import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
+import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
+import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +43,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     });
   }
 
-  Option? _option;
+  Option? _option = Option.expense;
 
   @override
   void initState() {
@@ -60,7 +62,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addTrxn(),
           backgroundColor: primaryColor,
-          
           child: const Icon(Icons.add, color: Colors.white),
         ),
         body: SizedBox(
@@ -308,11 +309,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 ),
                 actions: [
                   Button(
-                    onTap: () {
+                    onTap: () async {
                       TransactionModel trxn = TransactionModel(
                           transactionItem: itemName.text,
                           isCredit: expenseOrIncome,
                           price: double.tryParse(amount.text));
+                      NotificationModel notiModel = NotificationModel(
+                          title: "Balance Updated",
+                          body:
+                              "An income of 200 cedis was added. New balance is 3000");
                       if (itemName.text.isEmpty &&
                           amount.text.isEmpty &&
                           _option == null) {
@@ -330,6 +335,29 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       } else {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addTransaction(widget.accountModel!, trxn);
+                        if (trxn.isCredit == 'expense') {
+                          NotificationModel notiModel = NotificationModel(
+                              title: "Balance Updated",
+                              body:
+                                  "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}");
+                          Provider.of<TransactionProvider>(context,
+                                  listen: false)
+                              .addNotification(notiModel);
+                          await notificationPlugin.showNotification(
+                              notiModel.title!,
+                              notiModel.body!);
+                        }else{
+                          NotificationModel notiModel = NotificationModel(
+                              title: "Balance Updated",
+                              body:
+                                  "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}");
+                          Provider.of<TransactionProvider>(context,
+                                  listen: false)
+                              .addNotification(notiModel);
+                          await notificationPlugin.showNotification(
+                              notiModel.title!,
+                              notiModel.body!);
+                        }
 
                         startLoading();
                         Navigator.pop(context);
