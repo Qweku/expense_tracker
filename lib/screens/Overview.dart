@@ -13,9 +13,11 @@ import 'package:provider/provider.dart';
 
 import '../components/textField-widget.dart';
 
+enum Option { expense, income }
+
 class OverviewScreen extends StatefulWidget {
   AccountModel? accountModel;
-    OverviewScreen({
+  OverviewScreen({
     this.accountModel,
     super.key,
   });
@@ -27,6 +29,7 @@ class OverviewScreen extends StatefulWidget {
 class _OverviewScreenState extends State<OverviewScreen> {
   bool isActive = false;
   String expenseOrIncome = '';
+
   bool timerHasStarted = false;
   TextEditingController itemName = TextEditingController();
   TextEditingController amount = TextEditingController();
@@ -39,9 +42,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     });
   }
 
-  void _enterTransaction() {
-    GSheetsAPI.insert(itemName.text, amount.text, isActive);
-  }
+  Option? _option;
 
   @override
   Widget build(BuildContext context) {
@@ -49,162 +50,152 @@ class _OverviewScreenState extends State<OverviewScreen> {
       startLoading();
     }
 
-    return WillPopScope(
-      onWillPop: () => _backButton(context),
-      child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _addExpense(context),
-            child: const Icon(Icons.add, color: Colors.white),
-            backgroundColor: primaryColor,
-          ),
-          body: SizedBox(
-            height: height,
-            width: width,
-            child: Stack(
-              children: [
-                Column(
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _addExpense(context),
+          child: const Icon(Icons.add, color: Colors.white),
+          backgroundColor: primaryColor,
+        ),
+        body: SizedBox(
+          height: height,
+          width: width,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    height: height * 0.35,
+                    width: width,
+                    color: primaryColor,
+                  ),
+                  Expanded(
+                    child: Container(color: primaryColorLight),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: height * 0.35,
-                      width: width,
-                      color: primaryColor,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: height * 0.15,
+                        ),
+                        Text("Expenses for",
+                            style:
+                                headline1.copyWith(color: primaryColorLight)),
+                        Text(
+                          widget.accountModel!.accountName!.toTitleCase(),
+                          style: headline2.copyWith(
+                            fontSize: 30,
+                          ),
+                        ),
+                        SizedBox(
+                          height: height * 0.05,
+                        ),
+                        BalanceCard(
+                          income:
+                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).currentIncome}',
+                          expense:
+                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).currentExpense}',
+                          balance:
+                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}',
+                          //'${widget.accountModel!.remainingBalance}',
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * 0.05,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: width * 0.01),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Activity',
+                            style: headline1.copyWith(color: primaryColor),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+                      child: Divider(
+                        color: const Color.fromARGB(255, 224, 224, 224),
+                        height: height * 0.03,
+                      ),
                     ),
                     Expanded(
-                      child: Container(color: primaryColorLight),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: height * 0.15,
-                          ),
-                          Text("Expenses for",
-                              style:
-                                  headline1.copyWith(color: primaryColorLight)),
-                          Text(
-                            GSheetsAPI.worksheet!.title,
-                            style: headline2.copyWith(
-                              fontSize: 30,
-                            ),
-                          ),
-                          SizedBox(
-                            height: height * 0.05,
-                          ),
-                          BalanceCard(
-                            income: '${GSheetsAPI.calculateIncome()}',
-                            expense: '${GSheetsAPI.calculateExpense()}',
-                            balance:
-                                '${GSheetsAPI.calculateIncome() - GSheetsAPI.calculateExpense()}',
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: height * 0.05,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: width * 0.01),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Activity',
-                              style: headline1.copyWith(color: primaryColor),
-                            )),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width * 0.01),
-                        child: Divider(
-                          color: const Color.fromARGB(255, 224, 224, 224),
-                          height: height * 0.03,
-                        ),
-                      ),
-                      Expanded(
-                        child: GSheetsAPI.loading == true
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  color: primaryColor,
-                                ),
-                              )
-                            // : GSheetsAPI.currentTransactions.isEmpty
-                            //     ? Center(
-                            //         child: Text(
-                            //           'No Accounts',
-                            //           style: headline1,
-                            //         ),
-                            //       )
-                            : ListView(
-                                physics: const BouncingScrollPhysics(),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.01),
-                                children: List.generate(
-                                    GSheetsAPI.currentTransactions.length,
-                                    (index) => TransactionListCard(
-                                          title: GSheetsAPI
-                                              .currentTransactions[index][0],
-                                          expenseOrIncome: GSheetsAPI
-                                              .currentTransactions[index][2],
-                                          amount: GSheetsAPI
-                                              .currentTransactions[index][1],
-                                        )),
+                      child: (context
+                                  .watch<TransactionProvider>()
+                                  .accountList
+                                  .singleWhere((element) =>
+                                      element.accountName ==
+                                      widget.accountModel!.accountName)
+                                  .transactions ??= [])
+                              .isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.mood_bad,
+                                    color: primaryColor,
+                                    size: 50,
+                                  ),
+                                  Text(
+                                    'No Transactions',
+                                    style: headline1,
+                                  ),
+                                ],
                               ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )),
-    );
-  }
-
-  _backButton(context) {
-    var theme = Theme.of(context);
-    return showDialog<bool>(
-        context: context,
-        builder: (c) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              content: SizedBox(
-                height: height * 0.1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.warning_amber_outlined,
-                        size: 40, color: Color.fromARGB(255, 255, 38, 23)),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      "Do you really want to exit?",
-                      style: theme.textTheme.bodyText1,
-                    ),
+                            )
+                          : ListView(
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: width * 0.01),
+                              children: List.generate(
+                                  (context
+                                          .watch<TransactionProvider>()
+                                          .accountList
+                                          .singleWhere((element) =>
+                                              element.accountName ==
+                                              widget.accountModel!.accountName)
+                                          .transactions ??= [])
+                                      .length,
+                                  (index) => TransactionListCard(
+                                        title: context
+                                            .watch<TransactionProvider>()
+                                            .accountList
+                                            .singleWhere((element) =>
+                                                element.accountName ==
+                                                widget
+                                                    .accountModel!.accountName)
+                                            .transactions![index]
+                                            .transactionItem!,
+                                        expenseOrIncome: context
+                                            .watch<TransactionProvider>()
+                                            .accountList
+                                            .singleWhere((element) =>
+                                                element.accountName ==
+                                                widget
+                                                    .accountModel!.accountName)
+                                            .transactions![index]
+                                            .isCredit!,
+                                        amount:
+                                            '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName).transactions![index].price!}',
+                                      )),
+                            ),
+                    )
                   ],
                 ),
               ),
-              actions: [
-                TextButton(
-                    onPressed: () async {
-                      if (Platform.isIOS) {
-                        exit(0);
-                      }
-                      if (Platform.isAndroid) {
-                        return await SystemChannels.platform
-                            .invokeMethod<void>('SystemNavigator.pop');
-                      }
-                    },
-                    child: const Text("Yes")),
-                TextButton(
-                    onPressed: () => Navigator.pop(c, false),
-                    child: const Text("No"))
-              ],
-            ));
+            ],
+          ),
+        ));
   }
 
   _addExpense(context) {
@@ -263,7 +254,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         controller: amount,
                         keyboard: TextInputType.number,
                         borderColor: Colors.grey,
-                        hintText: 'Amout',
+                        hintText: 'Amount',
                         style: bodyText1,
                         prefixIcon: Icon(
                           Icons.monetization_on,
@@ -274,26 +265,33 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            'Expense',
-                            style: bodyText1,
-                          ),
-                          Switch(
-                              activeColor: primaryColor,
-                              value: isActive,
-                              onChanged: (val) {
+                          Expanded(
+                            child: RadioListTile<Option>(
+                              activeColor: theme.primaryColorDark,
+                              title: Text('Expense', style: bodyText1),
+                              value: Option.expense,
+                              groupValue: _option,
+                              onChanged: (Option? value) {
                                 setState(() {
-                                  isActive = val;
-                                  if (val) {
-                                    expenseOrIncome = 'income';
-                                  } else {
-                                    expenseOrIncome = 'expense';
-                                  }
+                                  _option = value;
+                                  expenseOrIncome = 'expense';
                                 });
-                              }),
-                          Text(
-                            'Income',
-                            style: bodyText1,
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<Option>(
+                              activeColor: theme.primaryColorDark,
+                              title: Text('Income', style: bodyText1),
+                              value: Option.income,
+                              groupValue: _option,
+                              onChanged: (Option? value) {
+                                setState(() {
+                                  _option = value;
+                                  expenseOrIncome = 'income';
+                                });
+                              },
+                            ),
                           ),
                         ],
                       )
@@ -303,7 +301,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 actions: [
                   Button(
                     onTap: () {
-                      if (itemName.text.isEmpty && amount.text.isEmpty) {
+                      TransactionModel trxn = TransactionModel(
+                          transactionItem: itemName.text,
+                          isCredit: expenseOrIncome,
+                          price: double.tryParse(amount.text));
+                      if (itemName.text.isEmpty &&
+                          amount.text.isEmpty &&
+                          _option == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               backgroundColor:
@@ -316,19 +320,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               shape: const StadiumBorder()),
                         );
                       } else {
-                        _enterTransaction();
+                        Provider.of<TransactionProvider>(context, listen: false)
+                            .addTransaction(widget.accountModel!, trxn);
+
                         startLoading();
                         Navigator.pop(context);
                       }
-
-                      // TransactionModel trxn = TransactionModel(
-                      //     transactionItem: itemName.text,
-                      //     isCredit: expenseOrIncome,
-                      //     price: double.tryParse(amount.text));
-                      // // accountModel.transactions!.add(trxn);
-                      // Provider.of<TransactionProvider>(context, listen: false)
-                      //     .addTransaction(widget.accountModel, trxn);
-                      // widget.accountModel.remainingBalance;
                     },
                     width: width * 0.4,
                     buttonText: 'Add',
@@ -373,7 +370,7 @@ class TransactionListCard extends StatelessWidget {
                   : primaryColor,
             ),
           ),
-          title: Text(title, style: headline1.copyWith(fontSize: 17)),
+          title: Text(title.toTitleCase(), style: headline1.copyWith(fontSize: 17)),
           subtitle: Text(today,
               style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
           trailing: Text('${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',

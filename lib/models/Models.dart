@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 class AccountModel {
-  final double? balance;
+  double? balance;
   final String? accountName;
   List<TransactionModel>? transactions = [];
   AccountModel({this.accountName, this.balance, this.transactions});
@@ -10,44 +10,43 @@ class AccountModel {
     double dr = 0;
     double cr = 0;
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == false) {
+      if (element.isCredit == 'expense') {
         dr += (element.price ??= 0);
       }
     }
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == true) {
+      if (element.isCredit == 'income') {
         cr += (element.price ??= 0);
       }
     }
     return (balance ?? 0) + cr - dr;
   }
 
-  toJSONEncodable() {
-    Map<String, dynamic> accItem = {};
-    accItem['accountName'] = accountName;
-    accItem['balance'] = balance;
-    accItem['transactions'] = 
-    transactions!.map((e) {
-      return e.toJSONEncodable();
-    }).toList();
+  double get currentIncome {
+    double cr = balance??0;
+    for (var element in (transactions ?? <TransactionModel>[])) {
+      if (element.isCredit == 'income') {
+        cr += (element.price ??= 0);
+      }
+    }
+    return cr;
+  }
 
-    return accItem;
+   double get currentExpense {
+    double dr = 0;
+    for (var element in (transactions ?? <TransactionModel>[])) {
+      if (element.isCredit == 'expense') {
+        dr += (element.price ??= 0);
+      }
+    }
+    return dr;
   }
 }
 
 class TransactionModel {
-  final String? isCredit;
+  String? isCredit;
   double? price;
   final String? transactionItem, date;
   TransactionModel(
       {this.date, this.price, this.transactionItem, this.isCredit});
-
-  toJSONEncodable() {
-    Map<String, dynamic> trxnItem = {};
-    trxnItem['isCredit'] = isCredit;
-    trxnItem['price'] = price;
-    trxnItem['transactionItem'] = transactionItem;
-
-    return trxnItem;
-  }
 }

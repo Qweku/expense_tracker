@@ -96,7 +96,10 @@ class _AccountListState extends State<AccountList> {
                       height: height * 0.05,
                     ),
                     Expanded(
-                      child: GSheetsAPI.numberOfSheets == 0
+                      child: context
+                              .watch<TransactionProvider>()
+                              .accountList
+                              .isEmpty
                           ? Center(
                               child: Text(
                                 'No Accounts',
@@ -126,7 +129,7 @@ class _AccountListState extends State<AccountList> {
                                             balance: context
                                                 .read<TransactionProvider>()
                                                 .accountList[index]
-                                                .balance!,
+                                                .remainingBalance,
                                           );
                                           Navigator.push(
                                               context,
@@ -265,15 +268,15 @@ class _AccountListState extends State<AccountList> {
                     AccountModel accountModel = AccountModel(
                         accountName: accountName.text,
                         balance: double.tryParse(balance.text));
-                    // Provider.of<TransactionProvider>(context, listen: false)
-                    //     .addAccount(accountModel);
-                 
-                    GSheetsAPI().createSheet(accountName.text);
-                    GSheetsAPI().countSheets();
-                   print(
-                          'Total Sheet = ${GSheetsAPI.numberOfSheets}',
-                        );
-                    setState(() {});
+                    Provider.of<TransactionProvider>(context, listen: false)
+                        .addAccount(accountModel);
+
+                    //   GSheetsAPI().createSheet(accountName.text);
+                    //   GSheetsAPI().countSheets();
+                    //  print(
+                    //         'Total Sheet = ${GSheetsAPI.numberOfSheets}',
+                    //       );
+                    //   setState(() {});
 
                     Navigator.pop(context);
                   },
@@ -333,7 +336,7 @@ class AccountCard extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(accountName, style: headline2),
+                  Text(accountName.toTitleCase(), style: headline2),
                   SizedBox(
                     height: height * 0.03,
                   ),

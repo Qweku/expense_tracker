@@ -47,10 +47,8 @@ class SplashScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const OverviewScreen()));
-                        print(
-                          'Total Sheet = ${GSheetsAPI.numberOfSheets}',
-                        );
+                                builder: (context) => const AccountList()));
+                        
                       },
                       child: Container(
                         padding: EdgeInsets.all(width * 0.05),

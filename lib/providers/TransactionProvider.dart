@@ -35,7 +35,5 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void saveToStorage(AccountModel accModel) {
-    storage.setItem('acc', accModel.toJSONEncodable());
-  }
+  
 }
