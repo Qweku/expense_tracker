@@ -8,6 +8,7 @@ import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 import '../components/textField-widget.dart';
@@ -45,7 +46,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   @override
   void initState() {
-    _addTrxn();
+    // _addTrxn();
     super.initState();
   }
 
@@ -60,7 +61,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addTrxn(),
           backgroundColor: primaryColor,
-          
           child: const Icon(Icons.add, color: Colors.white),
         ),
         body: SizedBox(
@@ -308,7 +308,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 ),
                 actions: [
                   Button(
-                    onTap: () {
+                    onTap: () async {
                       TransactionModel trxn = TransactionModel(
                           transactionItem: itemName.text,
                           isCredit: expenseOrIncome,
@@ -330,8 +330,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       } else {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addTransaction(widget.accountModel!, trxn);
-
+                        LocalStorage storage = LocalStorage('accounts');
+                        await storage.setItem(
+                            'accountList',
+                            accountModelToJson(Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList));
                         startLoading();
+
+                        itemName.clear();
+                        amount.clear();
+                        
                         Navigator.pop(context);
                       }
                     },
