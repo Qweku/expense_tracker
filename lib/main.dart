@@ -1,15 +1,12 @@
-import 'package:expense_tracker/models/GSheets_API.dart';
+
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/SplashScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:gsheets/gsheets.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  GSheetsAPI().init('Account');
-  // await UserPreferences.init();
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => TransactionProvider())],
       child: const MyApp()));

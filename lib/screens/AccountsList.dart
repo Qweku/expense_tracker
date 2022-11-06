@@ -10,7 +10,6 @@ import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 class AccountList extends StatefulWidget {
@@ -29,7 +28,7 @@ class _AccountListState extends State<AccountList> {
   _addAccount() async {
     await Future.delayed(const Duration(milliseconds: 100));
     return showDialog<bool>(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (c) => AlertDialog(
               shape: RoundedRectangleBorder(
@@ -101,12 +100,7 @@ class _AccountListState extends State<AccountList> {
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addAccount(accountModel);
 
-                    //   GSheetsAPI().createSheet(accountName.text);
-                    //   GSheetsAPI().countSheets();
-                    //  print(
-                    //         'Total Sheet = ${GSheetsAPI.numberOfSheets}',
-                    //       );
-                    //   setState(() {});
+                   
 
                     Navigator.pop(context);
                   },
@@ -120,7 +114,6 @@ class _AccountListState extends State<AccountList> {
 
   @override
   void initState() {
-    GSheetsAPI().countSheets();
     _addAccount();
     super.initState();
   }
@@ -132,8 +125,8 @@ class _AccountListState extends State<AccountList> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addAccount(),
-          child: Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
         appBar: AppBar(
           elevation: 0,
@@ -244,9 +237,6 @@ class _AccountListState extends State<AccountList> {
     );
   }
 
-  Future _refresh() async {
-    GSheetsAPI.numberOfSheets;
-  }
 
   _backButton(context) {
     var theme = Theme.of(context);
@@ -363,15 +353,15 @@ class AccountCard extends StatelessWidget {
                     width: width * 0.8,
                     //padding: EdgeInsets.symmetric(vertical:height * 0.01),
                     decoration: BoxDecoration(
-                      border:
-                          Border.all(color: Color.fromARGB(255, 194, 194, 194)),
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 194, 194, 194)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
+                        onPressed: onTap,
                         child: Text('Details',
                             textAlign: TextAlign.center,
-                            style: headline2.copyWith(fontSize: 18)),
-                        onPressed: onTap),
+                            style: headline2.copyWith(fontSize: 18))),
                   )
                 ],
               ),

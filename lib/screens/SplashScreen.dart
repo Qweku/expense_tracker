@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:expense_tracker/components/constants.dart';
-import 'package:expense_tracker/models/GSheets_API.dart';
+
 import 'package:expense_tracker/screens/AccountsList.dart';
-import 'package:expense_tracker/screens/Overview.dart';
+
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {

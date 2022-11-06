@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:expense_tracker/models/Models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:localstorage/localstorage.dart';

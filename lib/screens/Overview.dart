@@ -1,8 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
 
 import 'package:expense_tracker/components/button_widget.dart';
 import 'package:expense_tracker/components/constants.dart';
@@ -62,8 +60,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
         resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addTrxn(),
-          child: const Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
+          
+          child: const Icon(Icons.add, color: Colors.white),
         ),
         body: SizedBox(
           height: height,
