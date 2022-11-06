@@ -29,7 +29,7 @@ class _AccountListState extends State<AccountList> {
   _addAccount() async {
     await Future.delayed(const Duration(milliseconds: 100));
     return showDialog<bool>(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (c) => AlertDialog(
               shape: RoundedRectangleBorder(
@@ -132,8 +132,8 @@ class _AccountListState extends State<AccountList> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addAccount(),
-          child: Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
         appBar: AppBar(
           elevation: 0,

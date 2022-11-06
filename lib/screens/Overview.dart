@@ -46,8 +46,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   Option? _option;
 
   @override
-   void initState() {
-   
+  void initState() {
     _addTrxn();
     super.initState();
   }
@@ -62,8 +61,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
         resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addTrxn(),
-          child: const Icon(Icons.add, color: Colors.white),
           backgroundColor: primaryColor,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
         body: SizedBox(
           height: height,
@@ -206,11 +205,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
         ));
   }
 
-  _addTrxn()async {
+  _addTrxn() async {
     await Future.delayed(const Duration(milliseconds: 100));
-   
+
     return showDialog<bool>(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (c) => StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
@@ -380,7 +379,8 @@ class TransactionListCard extends StatelessWidget {
                   : primaryColor,
             ),
           ),
-          title: Text(title.toTitleCase(), style: headline1.copyWith(fontSize: 17)),
+          title: Text(title.toTitleCase(),
+              style: headline1.copyWith(fontSize: 17)),
           subtitle: Text(today,
               style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
           trailing: Text('${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
