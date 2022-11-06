@@ -10,6 +10,7 @@ import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 import '../components/textField-widget.dart';
@@ -47,7 +48,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
   @override
   void initState() {
-    _addTrxn();
+    // _addTrxn();
     super.initState();
   }
 
@@ -359,7 +360,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               notiModel.body!);
                         }
 
+                        LocalStorage storage = LocalStorage('accounts');
+                        await storage.setItem(
+                            'accountList',
+                            accountModelToJson(Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList));
                         startLoading();
+
+                        itemName.clear();
+                        amount.clear();
+                        
                         Navigator.pop(context);
                       }
                     },

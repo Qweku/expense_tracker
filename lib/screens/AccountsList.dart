@@ -12,6 +12,7 @@ import 'package:expense_tracker/screens/Notification/notifications.dart';
 import 'package:expense_tracker/screens/Overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 class AccountList extends StatefulWidget {
@@ -26,7 +27,7 @@ class AccountList extends StatefulWidget {
 class _AccountListState extends State<AccountList> {
   TextEditingController accountName = TextEditingController();
   TextEditingController balance = TextEditingController();
-
+  LocalStorage storage = LocalStorage('accounts');
   _addAccount() async {
     await Future.delayed(const Duration(milliseconds: 100));
     return showDialog<bool>(
@@ -95,13 +96,21 @@ class _AccountListState extends State<AccountList> {
               ),
               actions: [
                 Button(
-                  onTap: () {
+                  onTap: () async {
                     AccountModel accountModel = AccountModel(
                         accountName: accountName.text,
                         balance: double.tryParse(balance.text));
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addAccount(accountModel);
 
+                    await storage.setItem(
+                        'accountList',
+                        accountModelToJson(Provider.of<TransactionProvider>(
+                                context,
+                                listen: false)
+                            .accountList));
+                    accountName.clear();
+                    balance.clear();
                     Navigator.pop(context);
                   },
                   width: width * 0.4,
@@ -118,12 +127,21 @@ class _AccountListState extends State<AccountList> {
     // }));
   }
 
+  void bootUp() async {
+    if (await storage.ready) {
+      Provider.of<TransactionProvider>(context, listen: false).accountList =
+          accountModelFromJson(storage.getItem('accountList') ?? '[]');
+    }
+  }
+
   @override
   void initState() {
     _addAccount();
     notificationPlugin.setListenerForLowerVersions(onNotificationLower);
     notificationPlugin.setOnNotificationClick(onNotificationClick);
 
+    // _addAccount();
+    bootUp();
     super.initState();
   }
 
