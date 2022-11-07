@@ -23,7 +23,7 @@ final int year = DateTime.now().year;
 final int hour = DateTime.now().hour;
 final int min = DateTime.now().minute;
 
-final String currentTime = "$hour:$min";
+final String currentTime = "$hour:${min < 10 ?"0$min":"$min"}";
 
 final String today = "$day ${months[month - 1]} $year";
 

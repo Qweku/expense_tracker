@@ -44,6 +44,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 )
               : ListView(
+                physics: BouncingScrollPhysics(),
                   children: List.generate(
                   context.watch<TransactionProvider>().notificationList.length,
                   (index) => Padding(
@@ -86,11 +87,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                              today,
+                               context
+                                    .watch<TransactionProvider>()
+                                    .notificationList[index]
+                                    .date!,
                               style: bodyText1.copyWith(color: primaryColor),
                             ),
                                 Text(
-                                  currentTime,
+                                   context
+                                    .watch<TransactionProvider>()
+                                    .notificationList[index]
+                                    .time!,
                                   style:
                                       bodyText1.copyWith(color: primaryColor),
                                 ),

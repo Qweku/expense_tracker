@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
 class TransactionProvider with ChangeNotifier {
-  LocalStorage storage = LocalStorage('acc');
+  LocalStorage storage = LocalStorage('accountList');
   int _notiCount = 0;
   List<NotificationModel> _notificationList = [];
   List<AccountModel> _accountList = [];
@@ -54,5 +54,14 @@ class TransactionProvider with ChangeNotifier {
 
   void addNotification(NotificationModel notificationModel) {
     _notificationList.add(notificationModel);
+  }
+
+  void removeAccount(AccountModel accountModel) {
+    for (var element in _accountList) {
+      if (element.accountName == accountModel.accountName) {
+        storage.deleteItem('accountList');
+      }
+    }
+    notifyListeners();
   }
 }

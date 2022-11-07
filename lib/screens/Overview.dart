@@ -9,6 +9,7 @@ import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
+import 'package:expense_tracker/screens/widgets/cardWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class OverviewScreen extends StatefulWidget {
 class _OverviewScreenState extends State<OverviewScreen> {
   bool isActive = false;
   bool error = false;
-  String expenseOrIncome = '';
+  String expenseOrIncome = 'expense';
   LocalStorage storage = LocalStorage('accounts');
   bool timerHasStarted = false;
   TextEditingController itemName = TextEditingController();
@@ -45,7 +46,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     });
   }
 
-  Option? _option;
+  Option? _option = Option.expense;
 
   @override
   void initState() {
@@ -350,14 +351,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       if (itemName.text.isEmpty ||
                           amount.text.isEmpty ||
                           _option == null) {
-                            setState(() { error = true;});
-                       
-                        print(error);
+                        setState(() {
+                          error = true;
+                        });
+
+                        
                       } else {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addTransaction(widget.accountModel!, trxn);
                         if (_option == Option.expense) {
                           NotificationModel notiModel = NotificationModel(
+                            date: today,
+                            time: currentTime,
                               title: "Balance Updated",
                               body:
                                   "An expense of ${trxn.price} cedis was deducted. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
@@ -375,6 +380,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           context.read<TransactionProvider>().notiCount = 1;
                         } else {
                           NotificationModel notiModel = NotificationModel(
+                            date: today,
+                            time: currentTime,
                               title: "Balance Updated",
                               body:
                                   "An income of ${trxn.price} cedis was added. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
@@ -406,7 +413,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
                         Navigator.pop(context);
                       }
-                      
                     },
                     width: width * 0.4,
                     buttonText: 'Add',
@@ -415,154 +421,5 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 ],
               );
             }));
-  }
-}
-
-class TransactionListCard extends StatelessWidget {
-  const TransactionListCard({
-    Key? key,
-    required this.title,
-    required this.amount,
-    required this.expenseOrIncome,
-  }) : super(key: key);
-
-  final String title, amount, expenseOrIncome;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: height * 0.01),
-      child: Container(
-        padding: EdgeInsets.all(width * 0.01),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white),
-            color: //theme.primaryColorLight
-                Colors.white.withOpacity(0.5)),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(
-              expenseOrIncome == "expense"
-                  ? Icons.arrow_downward
-                  : Icons.arrow_upward,
-              color: expenseOrIncome == "expense"
-                  ? primaryColorLight
-                  : primaryColor,
-            ),
-          ),
-          title: Text(title.toTitleCase(),
-              style: headline1.copyWith(fontSize: 17)),
-          subtitle: Text(today,
-              style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
-          trailing: Text('${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
-              style: bodyText1.copyWith(fontSize: 17, color: primaryColor)),
-        ),
-      ),
-    );
-  }
-}
-
-class BalanceCard extends StatelessWidget {
-  final String balance, income, expense;
-  const BalanceCard({
-    Key? key,
-    required this.balance,
-    required this.income,
-    required this.expense,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      // borderRadius: BorderRadius.circular(40),
-      child: Container(
-        padding: EdgeInsets.all(width * 0.05),
-        height: height * 0.2,
-        width: width * 0.9,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: primaryColorLight),
-            color: primaryColor),
-        child: Stack(
-          children: [
-            Positioned(
-                top: height * 0.02,
-                left: width * 0.05,
-                child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: primaryColorLight.withOpacity(0.6))),
-            Positioned(
-                bottom: height * 0.02,
-                right: width * 0.05,
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundColor: primaryColorLight.withOpacity(0.6),
-                )),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Available Balance', style: bodyText2),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('GHS', style: headline2),
-                    Text(balance, style: headline2.copyWith(fontSize: 60)),
-                    //Text('.50', style: theme.textTheme.headline2),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.arrow_upward,
-                            color: primaryColor,
-                          ),
-                        ),
-                        SizedBox(width: width * 0.02),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Income', style: bodyText2),
-                            Text('GHS $income', style: bodyText2),
-                          ],
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Expense', style: bodyText2),
-                            Text('GHS $expense', style: bodyText2),
-                          ],
-                        ),
-                        SizedBox(width: width * 0.02),
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.arrow_downward,
-                            color: primaryColorLight,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
