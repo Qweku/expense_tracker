@@ -5,9 +5,9 @@ final double width =
 final double height =
     MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.height;
 
-Color primaryColor = const Color.fromARGB(255, 0, 51, 23);
+Color primaryColor = Color.fromARGB(255, 8, 112, 55);
 Color primaryColorDark = const Color.fromARGB(255, 0, 4, 51);
-Color primaryColorLight = const Color.fromARGB(255, 179, 170, 97);
+Color primaryColorLight = Color.fromARGB(255, 221, 197, 18);
 
 TextStyle headline1 = const TextStyle(fontSize: 25, color: Colors.black);
 TextStyle headline2 =
@@ -23,7 +23,7 @@ final int year = DateTime.now().year;
 final int hour = DateTime.now().hour;
 final int min = DateTime.now().minute;
 
-final String currentTime = "$hour:${min < 10 ?"0$min":"$min"}";
+final String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
 
 final String today = "$day ${months[month - 1]} $year";
 

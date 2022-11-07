@@ -80,7 +80,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     color: primaryColor,
                   ),
                   Expanded(
-                    child: Container(color: primaryColorLight),
+                    child: Container(color: Color.fromARGB(255, 238, 238, 238)),
                   ),
                 ],
               ),

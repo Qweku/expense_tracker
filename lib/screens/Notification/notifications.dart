@@ -24,13 +24,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: primaryColorLight,
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
-        backgroundColor: theme.primaryColorLight,
+        backgroundColor: Color.fromARGB(255, 238, 238, 238),
         centerTitle: true,
         elevation: 0,
         title: Text('Notifications',
-            style: theme.textTheme.headline2!.copyWith(fontSize: 18)),
+            style: theme.textTheme.headline1!.copyWith(fontSize: 18)),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
@@ -59,7 +59,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Colors.white),
-                            color: Colors.white.withOpacity(0.3),
+                            color: primaryColorLight.withOpacity(0.3),
                           ),
                           child: ListTile(
                             leading: CircleAvatar(
@@ -75,7 +75,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   .notificationList[index]
                                   .title!,
                               style:
-                                  bodyText1.copyWith(color: Color.fromARGB(255, 255, 255, 255)),
+                                  bodyText1.copyWith(color: primaryColor,fontSize: 17),
                             ),
                             subtitle: Text(
                                 context

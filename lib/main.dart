@@ -23,9 +23,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.blue,
           fontFamily: 'Federo',
-          primaryColor: const Color.fromARGB(255, 0, 51, 23),
+          primaryColor: Color.fromARGB(255, 9, 71, 37),
           primaryColorDark: const Color.fromARGB(255, 0, 4, 51),
-          primaryColorLight: const Color.fromARGB(255, 179, 170, 97),
+          primaryColorLight: Color.fromARGB(255, 202, 181, 18),
           textTheme: const TextTheme(
               headline1: TextStyle(fontSize: 25, color: Colors.black),
               headline2: TextStyle(fontSize: 25, color: Colors.white),
