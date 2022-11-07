@@ -36,49 +36,70 @@ class _NotificationScreenState extends State<NotificationScreen> {
         padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
         child: SizedBox(
           height: height,
-          child: context
-                    .watch<TransactionProvider>()
-                    .notificationList
-                    .isEmpty?Center(
-                              child: Text(
-                                'No Accounts',
-                                style: headline1,
+          child: context.watch<TransactionProvider>().notificationList.isEmpty
+              ? Center(
+                  child: Text(
+                    'No Notifications',
+                    style: headline1,
+                  ),
+                )
+              : ListView(
+                  children: List.generate(
+                  context.watch<TransactionProvider>().notificationList.length,
+                  (index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: GestureDetector(
+                      onTap: () async {
+                        // await notificationPlugin.showNotification('Bandwidth Warning',
+                        //     "Your bandwidth has reached it's max point. Please reduce usage.");
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white),
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.notifications,
+                                color: primaryColor,
                               ),
-                            ):ListView(
-              children: List.generate(
-            context.watch<TransactionProvider>().notificationList.length,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: GestureDetector(
-                onTap: () async {
-                  // await notificationPlugin.showNotification('Bandwidth Warning',
-                  //     "Your bandwidth has reached it's max point. Please reduce usage.");
-                },
-                child: Container(
-                  
-                  padding: const EdgeInsets.all(
-                   15
+                            ),
+                            title: Text(
+                              context
+                                  .watch<TransactionProvider>()
+                                  .notificationList[index]
+                                  .title!,
+                              style:
+                                  bodyText1.copyWith(color: Color.fromARGB(255, 255, 255, 255)),
+                            ),
+                            subtitle: Text(
+                                context
+                                    .watch<TransactionProvider>()
+                                    .notificationList[index]
+                                    .body!.toCapitalized(),
+                                style: bodyText1),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                              today,
+                              style: bodyText1.copyWith(color: primaryColor),
+                            ),
+                                Text(
+                                  currentTime,
+                                  style:
+                                      bodyText1.copyWith(color: primaryColor),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                  child: ListTile(
-                    leading:  Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              height: 55,
-                              width: 55,
-                              child: Icon(Icons.notifications,
-                                  color: primaryColor, size: 30)),
-                                  title: Text(context.watch<TransactionProvider>().notificationList[index].title!,style: bodyText1,),
-
-                                  subtitle: Text(context.watch<TransactionProvider>().notificationList[index].body!,style: bodyText1,),
-                                  trailing: Text(currentTime,style: bodyText1.copyWith(color: primaryColor),),
-                  )  ),
-              ),
-            ),
-          )),
+                )),
         ),
       ),
     );

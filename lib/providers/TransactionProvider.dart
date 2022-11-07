@@ -7,16 +7,23 @@ import 'package:localstorage/localstorage.dart';
 
 class TransactionProvider with ChangeNotifier {
   LocalStorage storage = LocalStorage('acc');
+  int _notiCount = 0;
   List<NotificationModel> _notificationList = [];
   List<AccountModel> _accountList = [];
   List<TransactionModel> _transactionList = [];
 
+  int get notiCount => _notiCount;
   List<AccountModel> get accountList => _accountList;
   List<TransactionModel> get transactionList => _transactionList;
   List<NotificationModel> get notificationList => _notificationList;
 
   set accountList(List<AccountModel> accountList) {
     _accountList = accountList;
+    notifyListeners();
+  }
+
+  set notiCount(int notiCount) {
+    _notiCount = notiCount;
     notifyListeners();
   }
 

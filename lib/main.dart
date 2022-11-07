@@ -2,7 +2,6 @@
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/SplashScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {

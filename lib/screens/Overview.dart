@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -30,8 +30,9 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   bool isActive = false;
+  bool error = false;
   String expenseOrIncome = '';
-
+  LocalStorage storage = LocalStorage('accounts');
   bool timerHasStarted = false;
   TextEditingController itemName = TextEditingController();
   TextEditingController amount = TextEditingController();
@@ -44,7 +45,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     });
   }
 
-  Option? _option = Option.expense;
+  Option? _option;
 
   @override
   void initState() {
@@ -107,14 +108,32 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           height: height * 0.05,
                         ),
                         BalanceCard(
-                          income:
-                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).currentIncome}',
-                          expense:
-                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).currentExpense}',
-                          balance:
-                              '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}',
-                          //'${widget.accountModel!.remainingBalance}',
-                        ),
+                            income: context
+                                .watch<TransactionProvider>()
+                                .accountList
+                                .singleWhere((element) =>
+                                    element.accountName ==
+                                    widget.accountModel!.accountName!)
+                                .currentIncome
+                                .toStringAsFixed(2),
+                            expense: context
+                                .watch<TransactionProvider>()
+                                .accountList
+                                .singleWhere((element) =>
+                                    element.accountName ==
+                                    widget.accountModel!.accountName!)
+                                .currentExpense
+                                .toStringAsFixed(2),
+                            balance: context
+                                .watch<TransactionProvider>()
+                                .accountList
+                                .singleWhere((element) =>
+                                    element.accountName ==
+                                    widget.accountModel!.accountName!)
+                                .remainingBalance
+                                .toStringAsFixed(2)
+                            //'${widget.accountModel!.remainingBalance}',
+                            ),
                       ],
                     ),
                     SizedBox(
@@ -193,8 +212,16 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                                     .accountModel!.accountName)
                                             .transactions![index]
                                             .isCredit!,
-                                        amount:
-                                            '${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName).transactions![index].price!}',
+                                        amount: context
+                                            .watch<TransactionProvider>()
+                                            .accountList
+                                            .singleWhere((element) =>
+                                                element.accountName ==
+                                                widget
+                                                    .accountModel!.accountName)
+                                            .transactions![index]
+                                            .price!
+                                            .toStringAsFixed(2),
                                       )),
                             ),
                     )
@@ -217,7 +244,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 content: SizedBox(
-                  height: height * 0.35,
+                  height: height * 0.33,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -247,8 +274,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           )
                         ],
                       ),
-
-                      SizedBox(height: height * 0.05),
+                      SizedBox(height: height * 0.02),
+                      error
+                          ? Text('*Field Required',
+                              style: bodyText1.copyWith(
+                                  color: Color.fromARGB(255, 252, 17, 0)))
+                          : Container(),
+                      SizedBox(height: height * 0.02),
                       CustomTextField(
                         controller: itemName,
                         borderColor: Colors.grey,
@@ -315,52 +347,52 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           transactionItem: itemName.text,
                           isCredit: expenseOrIncome,
                           price: double.tryParse(amount.text));
-                      NotificationModel notiModel = NotificationModel(
-                          title: "Balance Updated",
-                          body:
-                              "An income of 200 cedis was added. New balance is 3000");
-                      if (itemName.text.isEmpty &&
-                          amount.text.isEmpty &&
+                      if (itemName.text.isEmpty ||
+                          amount.text.isEmpty ||
                           _option == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 17, 1),
-                              content: Text('Field Required',
-                                  textAlign: TextAlign.center,
-                                  style: bodyText2),
-                              duration: const Duration(milliseconds: 1500),
-                              behavior: SnackBarBehavior.floating,
-                              shape: const StadiumBorder()),
-                        );
+                            setState(() { error = true;});
+                       
+                        print(error);
                       } else {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addTransaction(widget.accountModel!, trxn);
-                        if (trxn.isCredit == 'expense') {
+                        if (_option == Option.expense) {
                           NotificationModel notiModel = NotificationModel(
                               title: "Balance Updated",
                               body:
-                                  "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}");
+                                  "An expense of ${trxn.price} cedis was deducted. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
                           Provider.of<TransactionProvider>(context,
                                   listen: false)
                               .addNotification(notiModel);
                           await notificationPlugin.showNotification(
-                              notiModel.title!,
-                              notiModel.body!);
-                        }else{
+                              notiModel.title!, notiModel.body!);
+                          await storage.setItem(
+                              'notifList',
+                              notificationModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .notificationList));
+                          context.read<TransactionProvider>().notiCount = 1;
+                        } else {
                           NotificationModel notiModel = NotificationModel(
                               title: "Balance Updated",
                               body:
-                                  "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance}");
+                                  "An income of ${trxn.price} cedis was added. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+
                           Provider.of<TransactionProvider>(context,
                                   listen: false)
                               .addNotification(notiModel);
                           await notificationPlugin.showNotification(
-                              notiModel.title!,
-                              notiModel.body!);
+                              notiModel.title!, notiModel.body!);
+                          await storage.setItem(
+                              'notifList',
+                              notificationModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .notificationList));
+                          context.read<TransactionProvider>().notiCount = 1;
                         }
 
-                        LocalStorage storage = LocalStorage('accounts');
                         await storage.setItem(
                             'accountList',
                             accountModelToJson(Provider.of<TransactionProvider>(
@@ -368,12 +400,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                     listen: false)
                                 .accountList));
                         startLoading();
-
+                        error = false;
                         itemName.clear();
                         amount.clear();
-                        
+
                         Navigator.pop(context);
                       }
+                      
                     },
                     width: width * 0.4,
                     buttonText: 'Add',
@@ -457,13 +490,14 @@ class BalanceCard extends StatelessWidget {
                 top: height * 0.02,
                 left: width * 0.05,
                 child: CircleAvatar(
-                    radius: 30, backgroundColor: primaryColorLight)),
+                    radius: 30,
+                    backgroundColor: primaryColorLight.withOpacity(0.6))),
             Positioned(
                 bottom: height * 0.02,
                 right: width * 0.05,
                 child: CircleAvatar(
                   radius: 40,
-                  backgroundColor: primaryColorLight,
+                  backgroundColor: primaryColorLight.withOpacity(0.6),
                 )),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

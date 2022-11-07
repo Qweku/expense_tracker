@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:expense_tracker/components/button_widget.dart';
@@ -6,6 +8,7 @@ import 'package:expense_tracker/components/notificationButton.dart';
 import 'package:expense_tracker/components/textField-widget.dart';
 import 'package:expense_tracker/models/GSheets_API.dart';
 import 'package:expense_tracker/models/Models.dart';
+import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
 import 'package:expense_tracker/screens/Notification/notifications.dart';
@@ -102,6 +105,23 @@ class _AccountListState extends State<AccountList> {
                         balance: double.tryParse(balance.text));
                     Provider.of<TransactionProvider>(context, listen: false)
                         .addAccount(accountModel);
+                    NotificationModel notiModel = NotificationModel(
+                              title: "New Account",
+                              body:
+                                  ("${accountModel.accountName} created successfully.").toCapitalized());
+                          Provider.of<TransactionProvider>(context,
+                                  listen: false)
+                              .addNotification(notiModel);
+                          await notificationPlugin.showNotification(
+                              notiModel.title!, notiModel.body!);
+                          await storage.setItem(
+                              'notifList',
+                              notificationModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .notificationList));
+                          context.read<TransactionProvider>().notiCount = 1;
+                        
 
                     await storage.setItem(
                         'accountList',
@@ -120,6 +140,7 @@ class _AccountListState extends State<AccountList> {
               ],
             ));
   }
+
   onNotificationLower(ReceivedNotification receivedNotification) {}
   onNotificationClick(String payload) {
     // Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -131,12 +152,16 @@ class _AccountListState extends State<AccountList> {
     if (await storage.ready) {
       Provider.of<TransactionProvider>(context, listen: false).accountList =
           accountModelFromJson(storage.getItem('accountList') ?? '[]');
+      Provider.of<TransactionProvider>(context, listen: false)
+              .notificationList =
+          notificationModelFromJson(storage.getItem('notifList') ?? '[]');
+    } else {
+      _addAccount();
     }
   }
 
   @override
   void initState() {
-    _addAccount();
     notificationPlugin.setListenerForLowerVersions(onNotificationLower);
     notificationPlugin.setOnNotificationClick(onNotificationClick);
 
@@ -162,15 +187,20 @@ class _AccountListState extends State<AccountList> {
             Padding(
               padding: EdgeInsets.only(right: width * 0.03),
               child: NotificationIconButton(
-                quantity: context
-                    .watch<TransactionProvider>()
-                    .notificationList
-                    .length,
+                quantity: context.watch<TransactionProvider>().notiCount,
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NotificationScreen()));
+                  if (context.read<TransactionProvider>().notiCount > 0) {
+                    context.read<TransactionProvider>().notiCount = 0;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NotificationScreen()));
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NotificationScreen()));
+                  }
                 },
               ),
             )
@@ -243,8 +273,11 @@ class _AccountListState extends State<AccountList> {
                                             .watch<TransactionProvider>()
                                             .accountList[index]
                                             .accountName!,
-                                        balance:
-                                            '${context.watch<TransactionProvider>().accountList[index].remainingBalance}',
+                                        balance: context
+                                            .watch<TransactionProvider>()
+                                            .accountList[index]
+                                            .remainingBalance
+                                            .toStringAsFixed(2),
                                         onTap: () {
                                           AccountModel accModel = AccountModel(
                                             accountName: context
