@@ -119,12 +119,11 @@ class _AccountListState extends State<AccountList> {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addAccount(accountModel);
                         NotificationModel notiModel = NotificationModel(
-                          date: today,
+                            date: today,
                             time: currentTime,
                             title: "New Account",
                             body:
-                                ("${accountModel.accountName} created successfully.")
-                                    .toCapitalized());
+                                ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addNotification(notiModel);
                         await notificationPlugin.showNotification(
@@ -282,7 +281,7 @@ class _AccountListState extends State<AccountList> {
                                       .accountList
                                       .length,
                                   (index) => AccountCard(
-                                        onLongPress: () => itemActions(context),
+                                        onLongPress: () => itemActions(context,index),
                                         accountName: context
                                             .watch<TransactionProvider>()
                                             .accountList[index]
@@ -365,7 +364,7 @@ class _AccountListState extends State<AccountList> {
             ));
   }
 
-  void itemActions(context) {
+  void itemActions(context, int index) {
     final theme = Theme.of(context);
     double height = MediaQuery.of(context).size.height;
     showModalBottomSheet(
@@ -392,8 +391,7 @@ class _AccountListState extends State<AccountList> {
                       icon: Icons.edit),
                   BottomSheetChild(
                       onTap: () async {
-                        storage.deleteItem('accountList');
-                        setState(() {});
+                        Provider.of<TransactionProvider>(context, listen: false).removeAccount(index);
                         Navigator.pop(context);
                       },
                       theme: theme,

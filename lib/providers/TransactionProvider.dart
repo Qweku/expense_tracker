@@ -56,12 +56,8 @@ class TransactionProvider with ChangeNotifier {
     _notificationList.add(notificationModel);
   }
 
-  void removeAccount(AccountModel accountModel) {
-    for (var element in _accountList) {
-      if (element.accountName == accountModel.accountName) {
-        storage.deleteItem('accountList');
-      }
-    }
+  void removeAccount(int index) {
+    _accountList.removeAt(index);
     notifyListeners();
   }
 }

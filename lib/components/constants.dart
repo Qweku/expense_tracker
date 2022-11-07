@@ -17,15 +17,15 @@ TextStyle bodyText1 =
 TextStyle bodyText2 =
     const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255));
 
-final int day = DateTime.now().day;
-final int month = DateTime.now().month;
-final int year = DateTime.now().year;
-final int hour = DateTime.now().hour;
-final int min = DateTime.now().minute;
+ int day = DateTime.now().day;
+ int month = DateTime.now().month;
+ int year = DateTime.now().year;
+ int hour = DateTime.now().hour;
+ int min = DateTime.now().minute;
 
-final String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
+ String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
 
-final String today = "$day ${months[month - 1]} $year";
+ String today = "$day ${months[month - 1]} $year";
 
 List<String> months = [
   'Jan',

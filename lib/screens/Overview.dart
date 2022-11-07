@@ -375,7 +375,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             time: currentTime,
                               title: "Balance Updated",
                               body:
-                                  "An expense of ${trxn.price} cedis was deducted. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                                  "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
                           Provider.of<TransactionProvider>(context,
                                   listen: false)
                               .addNotification(notiModel);
@@ -394,7 +394,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             time: currentTime,
                               title: "Balance Updated",
                               body:
-                                  "An income of ${trxn.price} cedis was added. New balance is GHS${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                                  "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
 
                           Provider.of<TransactionProvider>(context,
                                   listen: false)

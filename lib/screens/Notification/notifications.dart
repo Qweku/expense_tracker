@@ -26,6 +26,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Color.fromARGB(255, 238, 238, 238),
         centerTitle: true,
         elevation: 0,
@@ -81,21 +82,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 context
                                     .read<TransactionProvider>()
                                     .notificationList[index]
-                                    .body!.toCapitalized(),
+                                    .body!,
                                 style: bodyText1),
                             trailing: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                context
-                                    .read<TransactionProvider>()
+                                    .watch<TransactionProvider>()
                                     .notificationList[index]
                                     .date!,
                               style: bodyText1.copyWith(color: primaryColor),
                             ),
                                 Text(
                                    context
-                                    .read<TransactionProvider>()
+                                    .watch<TransactionProvider>()
                                     .notificationList[index]
                                     .time!,
                                   style:
