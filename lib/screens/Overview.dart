@@ -196,7 +196,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                       .length,
                                   (index) => TransactionListCard(
                                         title: context
-                                            .watch<TransactionProvider>()
+                                            .read<TransactionProvider>()
                                             .accountList
                                             .singleWhere((element) =>
                                                 element.accountName ==
@@ -205,7 +205,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             .transactions![index]
                                             .transactionItem!,
                                         expenseOrIncome: context
-                                            .watch<TransactionProvider>()
+                                            .read<TransactionProvider>()
                                             .accountList
                                             .singleWhere((element) =>
                                                 element.accountName ==
@@ -214,7 +214,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             .transactions![index]
                                             .isCredit!,
                                         amount: context
-                                            .watch<TransactionProvider>()
+                                            .read<TransactionProvider>()
                                             .accountList
                                             .singleWhere((element) =>
                                                 element.accountName ==
@@ -223,6 +223,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             .transactions![index]
                                             .price!
                                             .toStringAsFixed(2),
+                                            todayDate: context
+                                            .read<TransactionProvider>()
+                                            .accountList
+                                            .singleWhere((element) =>
+                                                element.accountName ==
+                                                widget
+                                                    .accountModel!.accountName)
+                                            .transactions![index]
+                                            .date!,
                                       )),
                             ),
                     )
@@ -347,6 +356,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       TransactionModel trxn = TransactionModel(
                           transactionItem: itemName.text,
                           isCredit: expenseOrIncome,
+                          date:today,
                           price: double.tryParse(amount.text));
                       if (itemName.text.isEmpty ||
                           amount.text.isEmpty ||

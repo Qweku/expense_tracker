@@ -71,7 +71,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                             title: Text(
                               context
-                                  .watch<TransactionProvider>()
+                                  .read<TransactionProvider>()
                                   .notificationList[index]
                                   .title!,
                               style:
@@ -79,7 +79,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                             subtitle: Text(
                                 context
-                                    .watch<TransactionProvider>()
+                                    .read<TransactionProvider>()
                                     .notificationList[index]
                                     .body!.toCapitalized(),
                                 style: bodyText1),
@@ -88,14 +88,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               children: [
                                 Text(
                                context
-                                    .watch<TransactionProvider>()
+                                    .read<TransactionProvider>()
                                     .notificationList[index]
                                     .date!,
                               style: bodyText1.copyWith(color: primaryColor),
                             ),
                                 Text(
                                    context
-                                    .watch<TransactionProvider>()
+                                    .read<TransactionProvider>()
                                     .notificationList[index]
                                     .time!,
                                   style:

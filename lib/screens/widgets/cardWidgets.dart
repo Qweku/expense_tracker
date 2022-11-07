@@ -103,9 +103,10 @@ class TransactionListCard extends StatelessWidget {
     required this.title,
     required this.amount,
     required this.expenseOrIncome,
+    required this.todayDate,
   }) : super(key: key);
 
-  final String title, amount, expenseOrIncome;
+  final String title, amount, expenseOrIncome, todayDate;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +133,7 @@ class TransactionListCard extends StatelessWidget {
           ),
           title: Text(title.toTitleCase(),
               style: headline1.copyWith(fontSize: 17)),
-          subtitle: Text(today,
+          subtitle: Text(todayDate,
               style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
           trailing: Text('${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
               style: bodyText1.copyWith(fontSize: 17, color: primaryColor)),
