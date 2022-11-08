@@ -7,7 +7,7 @@ final double height =
 
 Color primaryColor = Color.fromARGB(255, 8, 112, 55);
 Color primaryColorDark = const Color.fromARGB(255, 0, 4, 51);
-Color primaryColorLight = Color.fromARGB(255, 221, 197, 18);
+Color primaryColorLight = Color.fromARGB(255, 247, 150, 6);
 
 TextStyle headline1 = const TextStyle(fontSize: 25, color: Colors.black);
 TextStyle headline2 =

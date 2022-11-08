@@ -16,27 +16,23 @@ class SplashScreen extends StatelessWidget {
         body: SizedBox(
       height: height,
       width: width,
-      child: Stack(
+      child: Column(
         children: [
-          Image.asset(
-            'assets/splash.gif',
-            fit: BoxFit.cover,
-            height: height,
-            width: width,
+          SizedBox(
+            height:height*0.5,
+            child: Image.asset('assets/splash-pic.jpg',fit: BoxFit.cover,width: width,),
           ),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          Expanded(
             child: Container(
               padding: EdgeInsets.all(width * 0.05),
-              height: height,
-              width: width,
-              color: Colors.white.withOpacity(0.5),
+             
+              color: primaryColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text('Take control of your finances',
-                      style: theme.textTheme.headline1!.copyWith(fontSize: 70)),
+                      style: theme.textTheme.headline2!.copyWith(fontSize: 70)),
                   SizedBox(
                     height: height * 0.05,
                   ),
@@ -48,7 +44,6 @@ class SplashScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const AccountList()));
-                        
                       },
                       child: Container(
                         padding: EdgeInsets.all(width * 0.05),
