@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final double width =
     MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
@@ -17,15 +18,18 @@ TextStyle bodyText1 =
 TextStyle bodyText2 =
     const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255));
 
- int day = DateTime.now().day;
- int month = DateTime.now().month;
- int year = DateTime.now().year;
- int hour = DateTime.now().hour;
- int min = DateTime.now().minute;
+int day = DateTime.now().day;
+int month = DateTime.now().month;
+int year = DateTime.now().year;
+int hour = DateTime.now().hour;
+int min = DateTime.now().minute;
 
- String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
+String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
 
- String today = "$day ${months[month - 1]} $year";
+String today = "$day ${months[month - 1]} $year";
+
+DateFormat timeformat = DateFormat.Hms();
+DateFormat dateformat = DateFormat.yMMMMd();
 
 List<String> months = [
   'Jan',

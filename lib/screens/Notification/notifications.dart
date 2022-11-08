@@ -36,79 +36,82 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
         child: SizedBox(
-          height: height,
-          child: context.watch<TransactionProvider>().notificationList.isEmpty
-              ? Center(
-                  child: Text(
-                    'No Notifications',
-                    style: headline1,
-                  ),
-                )
-              : ListView(
-                physics: BouncingScrollPhysics(),
-                  children: List.generate(
-                  context.watch<TransactionProvider>().notificationList.length,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: GestureDetector(
-                      onTap: () async {
-                        // await notificationPlugin.showNotification('Bandwidth Warning',
-                        //     "Your bandwidth has reached it's max point. Please reduce usage.");
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white),
-                            color: primaryColorLight.withOpacity(0.3),
-                          ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.notifications,
-                                color: primaryColor,
+            height: height,
+            child: context.watch<TransactionProvider>().notificationList.isEmpty
+                ? Center(
+                    child: Text(
+                      'No Notifications',
+                      style: headline1,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: context
+                        .watch<TransactionProvider>()
+                        .notificationList
+                        .length,
+                    reverse: true,
+                    physics: BouncingScrollPhysics(),
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: GestureDetector(
+                        onTap: () async {
+                          // await notificationPlugin.showNotification('Bandwidth Warning',
+                          //     "Your bandwidth has reached it's max point. Please reduce usage.");
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.white),
+                              color: primaryColorLight.withOpacity(0.3),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.notifications,
+                                  color: primaryColor,
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              context
-                                  .read<TransactionProvider>()
-                                  .notificationList[index]
-                                  .title!,
-                              style:
-                                  bodyText1.copyWith(color: primaryColor,fontSize: 17),
-                            ),
-                            subtitle: Text(
+                              title: Text(
                                 context
                                     .read<TransactionProvider>()
                                     .notificationList[index]
-                                    .body!,
-                                style: bodyText1),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                               context
-                                    .watch<TransactionProvider>()
-                                    .notificationList[index]
-                                    .date!,
-                              style: bodyText1.copyWith(color: primaryColor),
-                            ),
-                                Text(
-                                   context
-                                    .watch<TransactionProvider>()
-                                    .notificationList[index]
-                                    .time!,
-                                  style:
-                                      bodyText1.copyWith(color: primaryColor),
-                                ),
-                              ],
-                            ),
-                          )),
+                                    .title!,
+                                style: bodyText1.copyWith(
+                                    color: primaryColor, fontSize: 17),
+                              ),
+                              subtitle: Text(
+                                  context
+                                      .read<TransactionProvider>()
+                                      .notificationList[index]
+                                      .body!,
+                                  style: bodyText1),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    context
+                                        .watch<TransactionProvider>()
+                                        .notificationList[index]
+                                        .date!,
+                                    style:
+                                        bodyText1.copyWith(color: primaryColor),
+                                  ),
+                                  Text(
+                                    context
+                                        .watch<TransactionProvider>()
+                                        .notificationList[index]
+                                        .time!,
+                                    style:
+                                        bodyText1.copyWith(color: primaryColor),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ),
                     ),
-                  ),
-                )),
-        ),
+                  )),
       ),
     );
   }

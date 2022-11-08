@@ -118,16 +118,20 @@ class _AccountListState extends State<AccountList> {
                       } else {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addAccount(accountModel);
+
                         NotificationModel notiModel = NotificationModel(
-                            date: today,
-                            time: currentTime,
+                            date: dateformat.format(DateTime.now()),
+                            time: timeformat.format(DateTime.now()),
                             title: "New Account",
                             body:
                                 ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
+
                         Provider.of<TransactionProvider>(context, listen: false)
                             .addNotification(notiModel);
+
                         await notificationPlugin.showNotification(
                             notiModel.title!, notiModel.body!);
+
                         await storage.setItem(
                             'notifList',
                             notificationModelToJson(
@@ -142,8 +146,12 @@ class _AccountListState extends State<AccountList> {
                                     context,
                                     listen: false)
                                 .accountList));
+
+
                         accountName.clear();
                         balance.clear();
+
+
                         Navigator.pop(context);
                       }
                     },
@@ -281,7 +289,8 @@ class _AccountListState extends State<AccountList> {
                                       .accountList
                                       .length,
                                   (index) => AccountCard(
-                                        onLongPress: () => itemActions(context,index),
+                                        onLongPress: () =>
+                                            itemActions(context, index),
                                         accountName: context
                                             .watch<TransactionProvider>()
                                             .accountList[index]
@@ -391,7 +400,8 @@ class _AccountListState extends State<AccountList> {
                       icon: Icons.edit),
                   BottomSheetChild(
                       onTap: () async {
-                        Provider.of<TransactionProvider>(context, listen: false).removeAccount(index);
+                        Provider.of<TransactionProvider>(context, listen: false)
+                            .removeAccount(index);
                         Navigator.pop(context);
                       },
                       theme: theme,
