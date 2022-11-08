@@ -23,7 +23,7 @@ class AccountModel {
 
   factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(
         accountName: json["accountName"],
-        balance: json["balance"],
+        balance: double.tryParse( (json["balance"] ?? 0.0).toString()),
         transactions: List<TransactionModel>.from(
             json["transactions"].map((x) => TransactionModel.fromJson(x))),
       );

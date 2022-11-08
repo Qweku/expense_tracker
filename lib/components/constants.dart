@@ -28,8 +28,8 @@ String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
 
 String today = "$day ${months[month - 1]} $year";
 
-DateFormat timeformat = DateFormat.Hms();
-DateFormat dateformat = DateFormat.yMMMMd();
+DateFormat timeformat = DateFormat.Hm();
+DateFormat dateformat = DateFormat.yMMMd();
 
 List<String> months = [
   'Jan',
