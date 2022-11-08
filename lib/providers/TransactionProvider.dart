@@ -65,7 +65,7 @@ class TransactionProvider with ChangeNotifier {
   void editTransaction(
       AccountModel accountModel, TransactionModel transactionModel) {
     for (var element in _accountList) {
-      if (element.id == accountModel.id) {
+      if (element.accountName == accountModel.accountName) {
         element.transactions!
             .singleWhere((element) => element.id == transactionModel.id)
             .transactionItem = transactionModel.transactionItem;
@@ -91,8 +91,8 @@ class TransactionProvider with ChangeNotifier {
 
   void removeTransaction(int index, AccountModel accountModel) {
     for (var element in _accountList) {
-      if (element.id == accountModel.id) {
-        element.transactions!.removeAt(index);
+      if (element.accountName == accountModel.accountName) {
+        (element.transactions ??= []).removeAt(index);
       }
     }
     notifyListeners();

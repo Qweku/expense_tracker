@@ -364,7 +364,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         TransactionModel trxn = TransactionModel(
                             id: Provider.of<TransactionProvider>(context,
                                         listen: false)
-                                    .accountList
+                                    .accountList[index].transactions!
                                     .length +
                                 1,
                             transactionItem: itemName.text,
@@ -378,10 +378,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             error = true;
                           });
                         } else {
-                          Provider.of<TransactionProvider>(context,
+                            if (_option == Option.expense && !isEdit) {
+                              
+                              Provider.of<TransactionProvider>(context,
                                   listen: false)
                               .addTransaction(widget.accountModel!, trxn);
-                          if (_option == Option.expense) {
+                        
                             NotificationModel notiModel = NotificationModel(
                                 date: dateformat.format(DateTime.now()),
                                 time: timeformat.format(DateTime.now()),
@@ -403,7 +405,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             listen: false)
                                         .notificationList));
                             context.read<TransactionProvider>().notiCount = 1;
-                          } else if (_option == Option.income) {
+                          } else if (_option == Option.income && !isEdit) {
+
+                            Provider.of<TransactionProvider>(context,
+                                  listen: false)
+                              .addTransaction(widget.accountModel!, trxn);
+                        
                             NotificationModel notiModel = NotificationModel(
                                 date: dateformat.format(DateTime.now()),
                                 time: timeformat.format(DateTime.now()),
@@ -428,24 +435,18 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           } else if (isEdit &&
                               Provider.of<TransactionProvider>(context,
                                           listen: false)
-                                      .accountList.singleWhere((element) =>
-                                                element.id ==
-                                                widget
-                                                    .accountModel!.id)
-                                            .transactions![index]
+                                      .accountList[index].transactions![index]
                                       .id ==
                                   index + 1) {
                             TransactionModel trxnModel = TransactionModel(
                                 id: Provider.of<TransactionProvider>(context,
                                         listen: false)
-                                    .accountList.singleWhere((element) =>
-                                                element.id ==
-                                                widget
-                                                    .accountModel!.id)
-                                            .transactions![index]
+                                    .accountList[index].transactions![index]
                                     .id,
                                 transactionItem: itemName.text,
-                                price: double.tryParse(amount.text));
+                                price: double.tryParse(amount.text),
+                                isCredit: expenseOrIncome);
+                                
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
                                 .editTransaction(
@@ -500,30 +501,19 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         setState(() {
                           if (Provider.of<TransactionProvider>(context,
                                       listen: false)
-                                  .accountList.singleWhere((element) =>
-                                                element.id ==
-                                                widget
-                                                    .accountModel!.id)
+                                  .accountList[index]
                                             .transactions![index]
                                   .id ==
                               index + 1) {
                             itemName.text = Provider.of<TransactionProvider>(
                                     context,
                                     listen: false)
-                                .accountList.singleWhere((element) =>
-                                                element.id ==
-                                                widget
-                                                    .accountModel!.id)
-                                            .transactions![index]
+                                .accountList[index].transactions![index]
                                 .transactionItem!;
                             amount.text = Provider.of<TransactionProvider>(
                                     context,
                                     listen: false)
-                                .accountList.singleWhere((element) =>
-                                                element.id ==
-                                                widget
-                                                    .accountModel!.id)
-                                            .transactions![index]
+                                .accountList[index].transactions![index]
                                 .price!
                                 .toString();
                           }
