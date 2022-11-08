@@ -32,8 +32,9 @@ class _AccountListState extends State<AccountList> {
   TextEditingController accountName = TextEditingController();
   TextEditingController balance = TextEditingController();
   bool error = false;
+  bool isEdit = false;
   LocalStorage storage = LocalStorage('accounts');
-  _addAccount() async {
+  _addAccount(int index) async {
     await Future.delayed(const Duration(milliseconds: 100));
     return showDialog<bool>(
         barrierDismissible: false,
@@ -50,7 +51,7 @@ class _AccountListState extends State<AccountList> {
                     children: [
                       Column(
                         children: [
-                          Text('Add Account',
+                          Text(isEdit ? 'Edit Account' : 'Add Account',
                               style: bodyText1.copyWith(
                                   letterSpacing: 2,
                                   fontSize: 20,
@@ -83,7 +84,6 @@ class _AccountListState extends State<AccountList> {
                               style: bodyText1.copyWith(
                                   color: Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
-                     
                       CustomTextField(
                         controller: accountName,
                         borderColor: Colors.grey,
@@ -94,7 +94,6 @@ class _AccountListState extends State<AccountList> {
                           color: primaryColorLight,
                         ),
                       ),
-                      
                       CustomTextField(
                         controller: balance,
                         keyboard: TextInputType.number,
@@ -115,6 +114,11 @@ class _AccountListState extends State<AccountList> {
                     child: Button(
                       onTap: () async {
                         AccountModel accountModel = AccountModel(
+                            id: Provider.of<TransactionProvider>(context,
+                                        listen: false)
+                                    .accountList
+                                    .length +
+                                1,
                             accountName: accountName.text,
                             balance: double.tryParse(balance.text));
                         if (accountName.text.isEmpty || balance.text.isEmpty) {
@@ -122,47 +126,65 @@ class _AccountListState extends State<AccountList> {
                             error = true;
                           });
                         } else {
-                          Provider.of<TransactionProvider>(context, listen: false)
-                              .addAccount(accountModel);
-                  
-                          NotificationModel notiModel = NotificationModel(
-                              date: dateformat.format(DateTime.now()),
-                              time: timeformat.format(DateTime.now()),
-                              title: "New Account",
-                              body:
-                                  ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
-                  
-                          Provider.of<TransactionProvider>(context, listen: false)
-                              .addNotification(notiModel);
-                  
-                          await notificationPlugin.showNotification(
-                              notiModel.title!, notiModel.body!);
-                  
-                          await storage.setItem(
-                              'notifList',
-                              notificationModelToJson(
-                                  Provider.of<TransactionProvider>(context,
+                          if (isEdit &&
+                              Provider.of<TransactionProvider>(context,
                                           listen: false)
-                                      .notificationList));
-                          context.read<TransactionProvider>().notiCount = 1;
-                  
+                                      .accountList[index]
+                                      .id ==
+                                  index + 1) {
+                            AccountModel accModel = AccountModel(
+                                id: Provider.of<TransactionProvider>(context,
+                                        listen: false)
+                                    .accountList[index]
+                                    .id,
+                                accountName: accountName.text,
+                                balance: double.tryParse(balance.text));
+                            Provider.of<TransactionProvider>(context,
+                                    listen: false)
+                                .editAccount(accModel);
+                            isEdit = false;
+                          } else {
+                            Provider.of<TransactionProvider>(context,
+                                    listen: false)
+                                .addAccount(accountModel);
+
+                            NotificationModel notiModel = NotificationModel(
+                                date: dateformat.format(DateTime.now()),
+                                time: timeformat.format(DateTime.now()),
+                                title: "New Account",
+                                body:
+                                    ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
+
+                            Provider.of<TransactionProvider>(context,
+                                    listen: false)
+                                .addNotification(notiModel);
+
+                            await notificationPlugin.showNotification(
+                                notiModel.title!, notiModel.body!);
+
+                            await storage.setItem(
+                                'notifList',
+                                notificationModelToJson(
+                                    Provider.of<TransactionProvider>(context,
+                                            listen: false)
+                                        .notificationList));
+                            context.read<TransactionProvider>().notiCount = 1;
+                          }
                           await storage.setItem(
                               'accountList',
-                              accountModelToJson(Provider.of<TransactionProvider>(
-                                      context,
-                                      listen: false)
-                                  .accountList));
-                  
-                  
+                              accountModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .accountList));
+
                           accountName.clear();
                           balance.clear();
-                  
-                  
+
                           Navigator.pop(context);
                         }
                       },
                       width: width * 0.4,
-                      buttonText: 'Add',
+                      buttonText: isEdit?'Done':'Add',
                       color: primaryColor,
                     ),
                   )
@@ -203,7 +225,7 @@ class _AccountListState extends State<AccountList> {
       onWillPop: () => _backButton(context),
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _addAccount(),
+          onPressed: () => _addAccount(0),
           backgroundColor: primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
         ),
@@ -296,8 +318,9 @@ class _AccountListState extends State<AccountList> {
                                       .accountList
                                       .length,
                                   (index) => AccountCard(
-                                        onLongPress: () =>
-                                            itemActions(context, index),
+                                        onLongPress: () {
+                                          itemActions(context, index);
+                                        },
                                         accountName: context
                                             .watch<TransactionProvider>()
                                             .accountList[index]
@@ -400,6 +423,27 @@ class _AccountListState extends State<AccountList> {
                 children: [
                   BottomSheetChild(
                       onTap: () {
+                        setState(() {
+                          if (Provider.of<TransactionProvider>(context,
+                                      listen: false)
+                                  .accountList[index]
+                                  .id ==
+                              index + 1) {
+                            accountName.text = Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList[index]
+                                .accountName!;
+                            balance.text = Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList[index]
+                                .balance!
+                                .toString();
+                          }
+                        });
+                        isEdit = true;
+                        _addAccount(index);
                         Navigator.pop(context);
                       },
                       theme: theme,

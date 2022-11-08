@@ -52,12 +52,49 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void editAccount(AccountModel accountModel) {
+    for (var element in _accountList) {
+      if (element.id == accountModel.id) {
+        element.accountName = accountModel.accountName;
+        element.balance = accountModel.balance;
+      }
+    }
+    notifyListeners();
+  }
+
+  void editTransaction(
+      AccountModel accountModel, TransactionModel transactionModel) {
+    for (var element in _accountList) {
+      if (element.id == accountModel.id) {
+        element.transactions!
+            .singleWhere((element) => element.id == transactionModel.id)
+            .transactionItem = transactionModel.transactionItem;
+        element.transactions!
+            .singleWhere((element) => element.id == transactionModel.id)
+            .price = transactionModel.price;
+        element.transactions!
+            .singleWhere((element) => element.id == transactionModel.id)
+            .isCredit = transactionModel.isCredit;
+      }
+    }
+    notifyListeners();
+  }
+
   void addNotification(NotificationModel notificationModel) {
     _notificationList.add(notificationModel);
   }
 
   void removeAccount(int index) {
     _accountList.removeAt(index);
+    notifyListeners();
+  }
+
+  void removeTransaction(int index, AccountModel accountModel) {
+    for (var element in _accountList) {
+      if (element.id == accountModel.id) {
+        element.transactions!.removeAt(index);
+      }
+    }
     notifyListeners();
   }
 }

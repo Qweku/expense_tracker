@@ -15,20 +15,24 @@ class AccountModel {
     this.accountName,
     this.balance,
     this.transactions,
+    this.id,
   });
 
+  int? id;
   String? accountName;
   double? balance;
   List<TransactionModel>? transactions = [];
 
   factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(
+        id: json["id"],
         accountName: json["accountName"],
-        balance: double.tryParse( (json["balance"] ?? 0.0).toString()),
+        balance: double.tryParse((json["balance"] ?? 0.0).toString()),
         transactions: List<TransactionModel>.from(
             json["transactions"].map((x) => TransactionModel.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "accountName": accountName,
         "balance": balance ?? 0,
         "transactions": List<dynamic>.from(
@@ -73,17 +77,14 @@ class AccountModel {
 }
 
 class TransactionModel {
-  TransactionModel({
-    this.transactionItem,
-    this.price,
-    this.isCredit,
-    this.date,
-  });
+  TransactionModel(
+      {this.transactionItem, this.price, this.isCredit, this.date, this.id});
 
   String? transactionItem;
   double? price;
   String? isCredit;
   String? date;
+  int? id;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
       TransactionModel(
@@ -91,6 +92,7 @@ class TransactionModel {
         price: json["price"] ?? 0,
         isCredit: json["isCredit"] ?? false,
         date: json["date"] ?? '',
+        id: json["id"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -98,5 +100,6 @@ class TransactionModel {
         "price": price ?? 0,
         "isCredit": isCredit ?? false,
         "date": date ?? '',
+        "id": id ?? 0,
       };
 }

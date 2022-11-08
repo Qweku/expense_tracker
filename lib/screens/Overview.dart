@@ -9,6 +9,7 @@ import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
+import 'package:expense_tracker/screens/widgets/bottomSheetWidget.dart';
 import 'package:expense_tracker/screens/widgets/cardWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
@@ -32,6 +33,7 @@ class OverviewScreen extends StatefulWidget {
 class _OverviewScreenState extends State<OverviewScreen> {
   bool isActive = false;
   bool error = false;
+  bool isEdit = false;
   String expenseOrIncome = 'expense';
   LocalStorage storage = LocalStorage('accounts');
   bool timerHasStarted = false;
@@ -63,7 +65,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _addTrxn(),
+          onPressed: () => _addTrxn(0),
           backgroundColor: primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
         ),
@@ -195,6 +197,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                           .transactions ??= [])
                                       .length,
                                   (index) => TransactionListCard(
+                                    onTap: () => itemActions(context, index),
                                         title: context
                                             .read<TransactionProvider>()
                                             .accountList
@@ -223,7 +226,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             .transactions![index]
                                             .price!
                                             .toStringAsFixed(2),
-                                            todayDate: context
+                                        todayDate: context
                                             .read<TransactionProvider>()
                                             .accountList
                                             .singleWhere((element) =>
@@ -243,7 +246,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
         ));
   }
 
-  _addTrxn() async {
+  _addTrxn(int index) async {
     await Future.delayed(const Duration(milliseconds: 100));
 
     return showDialog<bool>(
@@ -261,7 +264,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     children: [
                       Column(
                         children: [
-                          Text('Add Transaction',
+                          Text(isEdit ? 'Edit Transaction' : 'Add Transaction',
                               style: bodyText1.copyWith(
                                   letterSpacing: 2,
                                   fontSize: 20,
@@ -276,8 +279,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 child: Divider(color: primaryColor),
                               ),
                               Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: height * 0.01),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: height * 0.01),
                                 child: Icon(Icons.edit,
                                     color: primaryColorLight, size: 20),
                               ),
@@ -289,13 +292,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           ),
                         ],
                       ),
-                      
                       error
                           ? Text('*Field Required',
                               style: bodyText1.copyWith(
                                   color: Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
-                     
                       CustomTextField(
                         controller: itemName,
                         borderColor: Colors.grey,
@@ -306,7 +307,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           color: primaryColorLight,
                         ),
                       ),
-                      
                       CustomTextField(
                         controller: amount,
                         keyboard: TextInputType.number,
@@ -318,7 +318,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           color: primaryColorLight,
                         ),
                       ),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -339,7 +338,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           ),
                           Expanded(
                             child: RadioListTile<Option>(
-                               contentPadding: EdgeInsets.zero,
+                              contentPadding: EdgeInsets.zero,
                               activeColor: primaryColor,
                               title: Text('Income', style: bodyText1),
                               value: Option.income,
@@ -363,9 +362,14 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     child: Button(
                       onTap: () async {
                         TransactionModel trxn = TransactionModel(
+                            id: Provider.of<TransactionProvider>(context,
+                                        listen: false)
+                                    .accountList
+                                    .length +
+                                1,
                             transactionItem: itemName.text,
                             isCredit: expenseOrIncome,
-                            date:dateformat.format(DateTime.now()),
+                            date: dateformat.format(DateTime.now()),
                             price: double.tryParse(amount.text));
                         if (itemName.text.isEmpty ||
                             amount.text.isEmpty ||
@@ -373,26 +377,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           setState(() {
                             error = true;
                           });
-                  
-                          
                         } else {
-                          Provider.of<TransactionProvider>(context, listen: false)
+                          Provider.of<TransactionProvider>(context,
+                                  listen: false)
                               .addTransaction(widget.accountModel!, trxn);
                           if (_option == Option.expense) {
                             NotificationModel notiModel = NotificationModel(
-                               date: dateformat.format(DateTime.now()),
-                              time: timeformat.format(DateTime.now()),
+                                date: dateformat.format(DateTime.now()),
+                                time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
                                     "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
-                            
+
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
                                 .addNotification(notiModel);
-                            
+
                             await notificationPlugin.showNotification(
                                 notiModel.title!, notiModel.body!);
-                            
+
                             await storage.setItem(
                                 'notifList',
                                 notificationModelToJson(
@@ -400,22 +403,21 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             listen: false)
                                         .notificationList));
                             context.read<TransactionProvider>().notiCount = 1;
-                          
-                          } else {
+                          } else if (_option == Option.income) {
                             NotificationModel notiModel = NotificationModel(
-                               date: dateformat.format(DateTime.now()),
-                              time: timeformat.format(DateTime.now()),
+                                date: dateformat.format(DateTime.now()),
+                                time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
                                     "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
-                  
+
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
                                 .addNotification(notiModel);
-                           
+
                             await notificationPlugin.showNotification(
                                 notiModel.title!, notiModel.body!);
-                            
+
                             await storage.setItem(
                                 'notifList',
                                 notificationModelToJson(
@@ -423,29 +425,130 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             listen: false)
                                         .notificationList));
                             context.read<TransactionProvider>().notiCount = 1;
+                          } else if (isEdit &&
+                              Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .accountList.singleWhere((element) =>
+                                                element.id ==
+                                                widget
+                                                    .accountModel!.id)
+                                            .transactions![index]
+                                      .id ==
+                                  index + 1) {
+                            TransactionModel trxnModel = TransactionModel(
+                                id: Provider.of<TransactionProvider>(context,
+                                        listen: false)
+                                    .accountList.singleWhere((element) =>
+                                                element.id ==
+                                                widget
+                                                    .accountModel!.id)
+                                            .transactions![index]
+                                    .id,
+                                transactionItem: itemName.text,
+                                price: double.tryParse(amount.text));
+                            Provider.of<TransactionProvider>(context,
+                                    listen: false)
+                                .editTransaction(
+                                    widget.accountModel!, trxnModel);
+                            isEdit = false;
                           }
-                  
+
                           await storage.setItem(
                               'accountList',
-                              accountModelToJson(Provider.of<TransactionProvider>(
-                                      context,
-                                      listen: false)
-                                  .accountList));
+                              accountModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .accountList));
                           startLoading();
                           error = false;
                           itemName.clear();
                           amount.clear();
-                  
+
                           Navigator.pop(context);
                         }
                       },
                       width: width * 0.4,
-                      buttonText: 'Add',
+                      buttonText: isEdit?'Done':'Add',
                       color: primaryColor,
                     ),
                   )
                 ],
               );
             }));
+  }
+
+  void itemActions(context, int index) {
+    final theme = Theme.of(context);
+    double height = MediaQuery.of(context).size.height;
+    showModalBottomSheet(
+        backgroundColor: Colors.grey[900],
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+        ),
+        context: context,
+        builder: (BuildContext bc) {
+          return Wrap(
+            spacing: 20,
+            children: <Widget>[
+              SizedBox(height: height * 0.05),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  BottomSheetChild(
+                      onTap: () {
+                        setState(() {
+                          if (Provider.of<TransactionProvider>(context,
+                                      listen: false)
+                                  .accountList.singleWhere((element) =>
+                                                element.id ==
+                                                widget
+                                                    .accountModel!.id)
+                                            .transactions![index]
+                                  .id ==
+                              index + 1) {
+                            itemName.text = Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList.singleWhere((element) =>
+                                                element.id ==
+                                                widget
+                                                    .accountModel!.id)
+                                            .transactions![index]
+                                .transactionItem!;
+                            amount.text = Provider.of<TransactionProvider>(
+                                    context,
+                                    listen: false)
+                                .accountList.singleWhere((element) =>
+                                                element.id ==
+                                                widget
+                                                    .accountModel!.id)
+                                            .transactions![index]
+                                .price!
+                                .toString();
+                          }
+                        });
+                        isEdit = true;
+                        _addTrxn(index);
+                        Navigator.pop(context);
+                      },
+                      theme: theme,
+                      title: 'Edit',
+                      icon: Icons.edit),
+                  BottomSheetChild(
+                      onTap: () async {
+                        Provider.of<TransactionProvider>(context, listen: false)
+                            .removeTransaction(index,widget.accountModel!);
+                        Navigator.pop(context);
+                      },
+                      theme: theme,
+                      title: 'Delete',
+                      icon: Icons.delete)
+                ],
+              ),
+              SizedBox(height: height * 0.05),
+            ],
+          );
+        });
   }
 }

@@ -99,43 +99,49 @@ class TransactionListCard extends StatelessWidget {
     required this.amount,
     required this.expenseOrIncome,
     required this.todayDate,
+    this.onTap,
   }) : super(key: key);
 
   final String title, amount, expenseOrIncome, todayDate;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: height * 0.01),
-      child: Container(
-        padding: EdgeInsets.all(width * 0.01),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white),
-            color: //theme.primaryColorLight
-                Colors.white.withOpacity(0.5)),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(
-              expenseOrIncome == "expense"
-                  ? Icons.arrow_downward
-                  : Icons.arrow_upward,
-              color: expenseOrIncome == "expense"
-                  ? primaryColorLight
-                  : primaryColor,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.all(width * 0.01),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white),
+              color: //theme.primaryColorLight
+                  Colors.white.withOpacity(0.5)),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(
+                expenseOrIncome == "expense"
+                    ? Icons.arrow_downward
+                    : Icons.arrow_upward,
+                color: expenseOrIncome == "expense"
+                    ? primaryColorLight
+                    : primaryColor,
+              ),
             ),
+            title: Text(title.toTitleCase(),
+                style: headline1.copyWith(fontSize: 17)),
+            subtitle: Text(todayDate,
+                style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
+            trailing: Text(
+                '${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
+                style: bodyText1.copyWith(
+                    fontSize: 17,
+                    color: expenseOrIncome == 'income'
+                        ? primaryColor
+                        : primaryColorLight)),
           ),
-          title: Text(title.toTitleCase(),
-              style: headline1.copyWith(fontSize: 17)),
-          subtitle: Text(todayDate,
-              style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
-          trailing: Text('${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
-              style: bodyText1.copyWith(
-                  fontSize: 17,
-                  color: expenseOrIncome == 'income'
-                      ? primaryColor
-                      : primaryColorLight)),
         ),
       ),
     );
