@@ -29,13 +29,12 @@ class SplashScreen extends StatelessWidget {
               color: primaryColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  SizedBox(height:height*0.03),
                   Text('Take control of your finances',
-                      style: theme.textTheme.headline2!.copyWith(fontSize: 70)),
-                  SizedBox(
-                    height: height * 0.05,
-                  ),
+                      style: theme.textTheme.headline2!.copyWith(fontSize: 50)),
+                 
                   Align(
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(

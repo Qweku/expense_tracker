@@ -256,41 +256,46 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 content: SizedBox(
                   height: height * 0.33,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Add Transaction',
-                          style: bodyText1.copyWith(
-                              letterSpacing: 2,
-                              fontSize: 20,
-                              color: primaryColor)),
-                      SizedBox(height: height * 0.01),
-                      //Divider
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          SizedBox(
-                            width: width * 0.2,
-                            child: Divider(color: primaryColor),
+                          Text('Add Transaction',
+                              style: bodyText1.copyWith(
+                                  letterSpacing: 2,
+                                  fontSize: 20,
+                                  color: primaryColor)),
+                          SizedBox(height: height * 0.01),
+                          //Divider
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: width * 0.2,
+                                child: Divider(color: primaryColor),
+                              ),
+                              Padding(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: height * 0.01),
+                                child: Icon(Icons.edit,
+                                    color: primaryColorLight, size: 20),
+                              ),
+                              SizedBox(
+                                width: width * 0.2,
+                                child: Divider(color: primaryColor),
+                              )
+                            ],
                           ),
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: height * 0.01),
-                            child: Icon(Icons.edit,
-                                color: primaryColorLight, size: 20),
-                          ),
-                          SizedBox(
-                            width: width * 0.2,
-                            child: Divider(color: primaryColor),
-                          )
                         ],
                       ),
-                      SizedBox(height: height * 0.02),
+                      
                       error
                           ? Text('*Field Required',
                               style: bodyText1.copyWith(
                                   color: Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
-                      SizedBox(height: height * 0.02),
+                     
                       CustomTextField(
                         controller: itemName,
                         borderColor: Colors.grey,
@@ -301,7 +306,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           color: primaryColorLight,
                         ),
                       ),
-                      SizedBox(height: height * 0.03),
+                      
                       CustomTextField(
                         controller: amount,
                         keyboard: TextInputType.number,
@@ -315,10 +320,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       ),
 
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: RadioListTile<Option>(
+                              contentPadding: EdgeInsets.zero,
                               activeColor: primaryColor,
                               title: Text('Expense', style: bodyText1),
                               value: Option.expense,
@@ -333,6 +339,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           ),
                           Expanded(
                             child: RadioListTile<Option>(
+                               contentPadding: EdgeInsets.zero,
                               activeColor: primaryColor,
                               title: Text('Income', style: bodyText1),
                               value: Option.income,
@@ -351,82 +358,85 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   ),
                 ),
                 actions: [
-                  Button(
-                    onTap: () async {
-                      TransactionModel trxn = TransactionModel(
-                          transactionItem: itemName.text,
-                          isCredit: expenseOrIncome,
-                          date:today,
-                          price: double.tryParse(amount.text));
-                      if (itemName.text.isEmpty ||
-                          amount.text.isEmpty ||
-                          _option == null) {
-                        setState(() {
-                          error = true;
-                        });
-
-                        
-                      } else {
-                        Provider.of<TransactionProvider>(context, listen: false)
-                            .addTransaction(widget.accountModel!, trxn);
-                        if (_option == Option.expense) {
-                          NotificationModel notiModel = NotificationModel(
-                            date: today,
-                            time: currentTime,
-                              title: "Balance Updated",
-                              body:
-                                  "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
-                          Provider.of<TransactionProvider>(context,
-                                  listen: false)
-                              .addNotification(notiModel);
-                          await notificationPlugin.showNotification(
-                              notiModel.title!, notiModel.body!);
-                          await storage.setItem(
-                              'notifList',
-                              notificationModelToJson(
-                                  Provider.of<TransactionProvider>(context,
-                                          listen: false)
-                                      .notificationList));
-                          context.read<TransactionProvider>().notiCount = 1;
+                  Align(
+                    alignment: Alignment.center,
+                    child: Button(
+                      onTap: () async {
+                        TransactionModel trxn = TransactionModel(
+                            transactionItem: itemName.text,
+                            isCredit: expenseOrIncome,
+                            date:today,
+                            price: double.tryParse(amount.text));
+                        if (itemName.text.isEmpty ||
+                            amount.text.isEmpty ||
+                            _option == null) {
+                          setState(() {
+                            error = true;
+                          });
+                  
+                          
                         } else {
-                          NotificationModel notiModel = NotificationModel(
-                            date: today,
-                            time: currentTime,
-                              title: "Balance Updated",
-                              body:
-                                  "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
-
-                          Provider.of<TransactionProvider>(context,
-                                  listen: false)
-                              .addNotification(notiModel);
-                          await notificationPlugin.showNotification(
-                              notiModel.title!, notiModel.body!);
-                          await storage.setItem(
-                              'notifList',
-                              notificationModelToJson(
-                                  Provider.of<TransactionProvider>(context,
-                                          listen: false)
-                                      .notificationList));
-                          context.read<TransactionProvider>().notiCount = 1;
-                        }
-
-                        await storage.setItem(
-                            'accountList',
-                            accountModelToJson(Provider.of<TransactionProvider>(
-                                    context,
+                          Provider.of<TransactionProvider>(context, listen: false)
+                              .addTransaction(widget.accountModel!, trxn);
+                          if (_option == Option.expense) {
+                            NotificationModel notiModel = NotificationModel(
+                              date: today,
+                              time: currentTime,
+                                title: "Balance Updated",
+                                body:
+                                    "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                            Provider.of<TransactionProvider>(context,
                                     listen: false)
-                                .accountList));
-                        startLoading();
-                        error = false;
-                        itemName.clear();
-                        amount.clear();
-
-                        Navigator.pop(context);
-                      }
-                    },
-                    width: width * 0.4,
-                    buttonText: 'Add',
-                    color: primaryColor,
+                                .addNotification(notiModel);
+                            await notificationPlugin.showNotification(
+                                notiModel.title!, notiModel.body!);
+                            await storage.setItem(
+                                'notifList',
+                                notificationModelToJson(
+                                    Provider.of<TransactionProvider>(context,
+                                            listen: false)
+                                        .notificationList));
+                            context.read<TransactionProvider>().notiCount = 1;
+                          } else {
+                            NotificationModel notiModel = NotificationModel(
+                              date: today,
+                              time: currentTime,
+                                title: "Balance Updated",
+                                body:
+                                    "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                  
+                            Provider.of<TransactionProvider>(context,
+                                    listen: false)
+                                .addNotification(notiModel);
+                            await notificationPlugin.showNotification(
+                                notiModel.title!, notiModel.body!);
+                            await storage.setItem(
+                                'notifList',
+                                notificationModelToJson(
+                                    Provider.of<TransactionProvider>(context,
+                                            listen: false)
+                                        .notificationList));
+                            context.read<TransactionProvider>().notiCount = 1;
+                          }
+                  
+                          await storage.setItem(
+                              'accountList',
+                              accountModelToJson(Provider.of<TransactionProvider>(
+                                      context,
+                                      listen: false)
+                                  .accountList));
+                          startLoading();
+                          error = false;
+                          itemName.clear();
+                          amount.clear();
+                  
+                          Navigator.pop(context);
+                        }
+                      },
+                      width: width * 0.4,
+                      buttonText: 'Add',
+                      color: primaryColor,
+                    ),
                   )
                 ],
               );

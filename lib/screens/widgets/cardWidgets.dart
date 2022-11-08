@@ -19,77 +19,51 @@ class AccountCard extends StatelessWidget {
       child: GestureDetector(
         onLongPress: onLongPress,
         child: ClipRRect(
-           borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20),
           child: Container(
             height: height * 0.25,
             width: width * 0.9,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              // border: Border.all(color: primaryColorLight),
-              //color: Colors.white,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors:[
-                  Colors.black,
-                  primaryColor,
-                  //primaryColor
-                ]
-              )
-            ),
+                borderRadius: BorderRadius.circular(20),
+                // border: Border.all(color: primaryColorLight),
+                //color: Colors.white,
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.black,
+                      primaryColor,
+                      //primaryColor
+                    ])),
             child: Stack(
               children: [
-                // Positioned(
-                //     top: height * 0.05,
-                //     left: width * 0.05,
-                //     child: CircleAvatar(
-                //         radius: 150,
-                //         backgroundColor: primaryColorLight.withOpacity(0.4))),
-                // Positioned(
-                //     bottom: -height * 0.1,
-                //     right: -width * 0.05,
-                //     child: CircleAvatar(
-                //       radius: 150,
-                //       backgroundColor: primaryColor.withOpacity(0.4),
-                //     )),
-                // Positioned(
-                //     top: -height * 0.05,
-                //     left: -width * 0.05,
-                //     child: CircleAvatar(
-                //       radius: 130,
-                //       backgroundColor: primaryColor.withOpacity(0.4),
-                //     )),
-               
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
                       height: height * 0.01,
                     ),
-                    Text(accountName.toTitleCase(),
-                        style: headline2),
-                    SizedBox(
-                      height: height * 0.02,
-                    ),
-                    Text('Available Balance',
-                        style: bodyText2),
-                    SizedBox(
-                      height: height * 0.01,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Text(accountName.toTitleCase(), style: headline2),
+                    Column(
                       children: [
-                        Text('GHS',
-                            style: headline2.copyWith(color: primaryColorLight)),
-                        Text(balance,
-                            style: headline2.copyWith(
-                                fontSize: 50, color: primaryColorLight)),
-                        //Text('.50', style: headline2),
+                        Text('Available Balance', style: bodyText2),
+                        SizedBox(
+                          height: height * 0.01,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('GHS',
+                                style: headline2.copyWith(
+                                    color: primaryColorLight)),
+                            Text(balance,
+                                style: headline2.copyWith(
+                                    fontSize: 50, color: primaryColorLight)),
+                            //Text('.50', style: headline2),
+                          ],
+                        ),
                       ],
-                    ),
-                    SizedBox(
-                      height: height * 0.03,
                     ),
                     Container(
                       width: width * 0.8,
@@ -102,8 +76,7 @@ class AccountCard extends StatelessWidget {
                           onPressed: onTap,
                           child: Text('Details',
                               textAlign: TextAlign.center,
-                              style: headline2.copyWith(
-                                  fontSize: 18))),
+                              style: headline2.copyWith(fontSize: 18))),
                     ),
                     SizedBox(
                       height: height * 0.01,
@@ -182,54 +155,42 @@ class BalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(width * 0.05),
-      height: height * 0.2,
+      height: height * 0.25,
       width: width * 0.9,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           // border: Border.all(color: primaryColorLight),
           gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors:[
-                  Colors.black,
-                  primaryColor,
-                  //primaryColor
-                ]
-              )),
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.black,
+                primaryColor,
+                //primaryColor
+              ])),
       child: Stack(
         children: [
-          // Positioned(
-          //     top: height * 0.02,
-          //     left: width * 0.05,
-          //     child: CircleAvatar(
-          //         radius: 70,
-          //         backgroundColor: primaryColorLight.withOpacity(0.3))),
-          // Positioned(
-          //     bottom: height * 0.02,
-          //     right: width * 0.05,
-          //     child: CircleAvatar(
-          //       radius: 70,
-          //       backgroundColor: primaryColor.withOpacity(0.3),
-          //     )),
-          
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Available Balance',
-                  style: bodyText2),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
                 children: [
-                  Text('GHS',
-                      style: headline2.copyWith(color: primaryColorLight)),
-                  Text(balance,
-                      style: headline2.copyWith(
-                          fontSize: 60, color: primaryColorLight)),
-                  //Text('.50', style: theme.textTheme.headline2),
+                  Text('Available Balance', style: bodyText2),
+                  SizedBox(
+                    height: height * 0.01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('GHS',
+                          style: headline2.copyWith(color: primaryColorLight)),
+                      Text(balance,
+                          style: headline2.copyWith(
+                              fontSize: 60, color: primaryColorLight)),
+                      //Text('.50', style: theme.textTheme.headline2),
+                    ],
+                  ),
                 ],
               ),
               Row(
@@ -251,8 +212,7 @@ class BalanceCard extends StatelessWidget {
                           Text('Income',
                               style:
                                   bodyText2.copyWith(color: primaryColorLight)),
-                          Text('GHS $income',
-                              style: bodyText2),
+                          Text('GHS $income', style: bodyText2),
                         ],
                       )
                     ],
@@ -265,8 +225,7 @@ class BalanceCard extends StatelessWidget {
                           Text('Expense',
                               style:
                                   bodyText2.copyWith(color: primaryColorLight)),
-                          Text('GHS $expense',
-                              style: bodyText2),
+                          Text('GHS $expense', style: bodyText2),
                         ],
                       ),
                       SizedBox(width: width * 0.02),

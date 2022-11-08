@@ -46,40 +46,44 @@ class _AccountListState extends State<AccountList> {
                   height: height * 0.3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Add Account',
-                          style: bodyText1.copyWith(
-                              letterSpacing: 2,
-                              fontSize: 20,
-                              color: primaryColor)),
-                      SizedBox(height: height * 0.01),
-                      //Divider
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          SizedBox(
-                            width: width * 0.2,
-                            child: Divider(color: primaryColor),
+                          Text('Add Account',
+                              style: bodyText1.copyWith(
+                                  letterSpacing: 2,
+                                  fontSize: 20,
+                                  color: primaryColor)),
+                          SizedBox(height: height * 0.01),
+                          //Divider
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: width * 0.2,
+                                child: Divider(color: primaryColor),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: height * 0.01),
+                                child: Icon(Icons.edit,
+                                    color: primaryColorLight, size: 20),
+                              ),
+                              SizedBox(
+                                width: width * 0.2,
+                                child: Divider(color: primaryColor),
+                              )
+                            ],
                           ),
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: height * 0.01),
-                            child: Icon(Icons.edit,
-                                color: primaryColorLight, size: 20),
-                          ),
-                          SizedBox(
-                            width: width * 0.2,
-                            child: Divider(color: primaryColor),
-                          )
                         ],
                       ),
-                      SizedBox(height: height * 0.02),
                       error
                           ? Text('*Field Required',
                               style: bodyText1.copyWith(
                                   color: Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
-                      SizedBox(height: height * 0.02),
+                     
                       CustomTextField(
                         controller: accountName,
                         borderColor: Colors.grey,
@@ -90,7 +94,7 @@ class _AccountListState extends State<AccountList> {
                           color: primaryColorLight,
                         ),
                       ),
-                      SizedBox(height: height * 0.03),
+                      
                       CustomTextField(
                         controller: balance,
                         keyboard: TextInputType.number,
@@ -106,50 +110,53 @@ class _AccountListState extends State<AccountList> {
                   ),
                 ),
                 actions: [
-                  Button(
-                    onTap: () async {
-                      AccountModel accountModel = AccountModel(
-                          accountName: accountName.text,
-                          balance: double.tryParse(balance.text));
-                      if (accountName.text.isEmpty || balance.text.isEmpty) {
-                        setState(() {
-                          error = true;
-                        });
-                      } else {
-                        Provider.of<TransactionProvider>(context, listen: false)
-                            .addAccount(accountModel);
-                        NotificationModel notiModel = NotificationModel(
-                            date: today,
-                            time: currentTime,
-                            title: "New Account",
-                            body:
-                                ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
-                        Provider.of<TransactionProvider>(context, listen: false)
-                            .addNotification(notiModel);
-                        await notificationPlugin.showNotification(
-                            notiModel.title!, notiModel.body!);
-                        await storage.setItem(
-                            'notifList',
-                            notificationModelToJson(
-                                Provider.of<TransactionProvider>(context,
-                                        listen: false)
-                                    .notificationList));
-                        context.read<TransactionProvider>().notiCount = 1;
-
-                        await storage.setItem(
-                            'accountList',
-                            accountModelToJson(Provider.of<TransactionProvider>(
-                                    context,
-                                    listen: false)
-                                .accountList));
-                        accountName.clear();
-                        balance.clear();
-                        Navigator.pop(context);
-                      }
-                    },
-                    width: width * 0.4,
-                    buttonText: 'Add',
-                    color: primaryColor,
+                  Align(
+                    alignment: Alignment.center,
+                    child: Button(
+                      onTap: () async {
+                        AccountModel accountModel = AccountModel(
+                            accountName: accountName.text,
+                            balance: double.tryParse(balance.text));
+                        if (accountName.text.isEmpty || balance.text.isEmpty) {
+                          setState(() {
+                            error = true;
+                          });
+                        } else {
+                          Provider.of<TransactionProvider>(context, listen: false)
+                              .addAccount(accountModel);
+                          NotificationModel notiModel = NotificationModel(
+                              date: today,
+                              time: currentTime,
+                              title: "New Account",
+                              body:
+                                  ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
+                          Provider.of<TransactionProvider>(context, listen: false)
+                              .addNotification(notiModel);
+                          await notificationPlugin.showNotification(
+                              notiModel.title!, notiModel.body!);
+                          await storage.setItem(
+                              'notifList',
+                              notificationModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .notificationList));
+                          context.read<TransactionProvider>().notiCount = 1;
+                  
+                          await storage.setItem(
+                              'accountList',
+                              accountModelToJson(Provider.of<TransactionProvider>(
+                                      context,
+                                      listen: false)
+                                  .accountList));
+                          accountName.clear();
+                          balance.clear();
+                          Navigator.pop(context);
+                        }
+                      },
+                      width: width * 0.4,
+                      buttonText: 'Add',
+                      color: primaryColor,
+                    ),
                   )
                 ],
               );
@@ -240,7 +247,7 @@ class _AccountListState extends State<AccountList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: height * 0.1,
+                      height: height * 0.07,
                     ),
                     Text("Welcome,",
                         style: headline2.copyWith(
@@ -281,7 +288,8 @@ class _AccountListState extends State<AccountList> {
                                       .accountList
                                       .length,
                                   (index) => AccountCard(
-                                        onLongPress: () => itemActions(context,index),
+                                        onLongPress: () =>
+                                            itemActions(context, index),
                                         accountName: context
                                             .watch<TransactionProvider>()
                                             .accountList[index]
@@ -391,7 +399,8 @@ class _AccountListState extends State<AccountList> {
                       icon: Icons.edit),
                   BottomSheetChild(
                       onTap: () async {
-                        Provider.of<TransactionProvider>(context, listen: false).removeAccount(index);
+                        Provider.of<TransactionProvider>(context, listen: false)
+                            .removeAccount(index);
                         Navigator.pop(context);
                       },
                       theme: theme,
