@@ -110,58 +110,61 @@ class _AccountListState extends State<AccountList> {
                   ),
                 ),
                 actions: [
-                  Button(
-                    onTap: () async {
-                      AccountModel accountModel = AccountModel(
-                          accountName: accountName.text,
-                          balance: double.tryParse(balance.text));
-                      if (accountName.text.isEmpty || balance.text.isEmpty) {
-                        setState(() {
-                          error = true;
-                        });
-                      } else {
-                        Provider.of<TransactionProvider>(context, listen: false)
-                            .addAccount(accountModel);
-
-                        NotificationModel notiModel = NotificationModel(
-                            date: dateformat.format(DateTime.now()),
-                            time: timeformat.format(DateTime.now()),
-                            title: "New Account",
-                            body:
-                                ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
-
-                        Provider.of<TransactionProvider>(context, listen: false)
-                            .addNotification(notiModel);
-
-                        await notificationPlugin.showNotification(
-                            notiModel.title!, notiModel.body!);
-
-                        await storage.setItem(
-                            'notifList',
-                            notificationModelToJson(
-                                Provider.of<TransactionProvider>(context,
-                                        listen: false)
-                                    .notificationList));
-                        context.read<TransactionProvider>().notiCount = 1;
-
-                        await storage.setItem(
-                            'accountList',
-                            accountModelToJson(Provider.of<TransactionProvider>(
-                                    context,
-                                    listen: false)
-                                .accountList));
-
-
-                        accountName.clear();
-                        balance.clear();
-
-
-                        Navigator.pop(context);
-                      }
-                    },
-                    width: width * 0.4,
-                    buttonText: 'Add',
-                    color: primaryColor,
+                  Align(
+                    alignment: Alignment.center,
+                    child: Button(
+                      onTap: () async {
+                        AccountModel accountModel = AccountModel(
+                            accountName: accountName.text,
+                            balance: double.tryParse(balance.text));
+                        if (accountName.text.isEmpty || balance.text.isEmpty) {
+                          setState(() {
+                            error = true;
+                          });
+                        } else {
+                          Provider.of<TransactionProvider>(context, listen: false)
+                              .addAccount(accountModel);
+                  
+                          NotificationModel notiModel = NotificationModel(
+                              date: dateformat.format(DateTime.now()),
+                              time: timeformat.format(DateTime.now()),
+                              title: "New Account",
+                              body:
+                                  ("${(accountModel.accountName)?.toCapitalized()} created successfully."));
+                  
+                          Provider.of<TransactionProvider>(context, listen: false)
+                              .addNotification(notiModel);
+                  
+                          await notificationPlugin.showNotification(
+                              notiModel.title!, notiModel.body!);
+                  
+                          await storage.setItem(
+                              'notifList',
+                              notificationModelToJson(
+                                  Provider.of<TransactionProvider>(context,
+                                          listen: false)
+                                      .notificationList));
+                          context.read<TransactionProvider>().notiCount = 1;
+                  
+                          await storage.setItem(
+                              'accountList',
+                              accountModelToJson(Provider.of<TransactionProvider>(
+                                      context,
+                                      listen: false)
+                                  .accountList));
+                  
+                  
+                          accountName.clear();
+                          balance.clear();
+                  
+                  
+                          Navigator.pop(context);
+                        }
+                      },
+                      width: width * 0.4,
+                      buttonText: 'Add',
+                      color: primaryColor,
+                    ),
                   )
                 ],
               );

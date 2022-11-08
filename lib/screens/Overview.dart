@@ -365,7 +365,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         TransactionModel trxn = TransactionModel(
                             transactionItem: itemName.text,
                             isCredit: expenseOrIncome,
-                            date:today,
+                            date:dateformat.format(DateTime.now()),
                             price: double.tryParse(amount.text));
                         if (itemName.text.isEmpty ||
                             amount.text.isEmpty ||
@@ -380,16 +380,19 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               .addTransaction(widget.accountModel!, trxn);
                           if (_option == Option.expense) {
                             NotificationModel notiModel = NotificationModel(
-                              date: today,
-                              time: currentTime,
+                               date: dateformat.format(DateTime.now()),
+                              time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
                                     "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                            
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
                                 .addNotification(notiModel);
+                            
                             await notificationPlugin.showNotification(
                                 notiModel.title!, notiModel.body!);
+                            
                             await storage.setItem(
                                 'notifList',
                                 notificationModelToJson(
@@ -397,10 +400,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                             listen: false)
                                         .notificationList));
                             context.read<TransactionProvider>().notiCount = 1;
+                          
                           } else {
                             NotificationModel notiModel = NotificationModel(
-                              date: today,
-                              time: currentTime,
+                               date: dateformat.format(DateTime.now()),
+                              time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
                                     "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
@@ -408,8 +412,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
                                 .addNotification(notiModel);
+                           
                             await notificationPlugin.showNotification(
                                 notiModel.title!, notiModel.body!);
+                            
                             await storage.setItem(
                                 'notifList',
                                 notificationModelToJson(
