@@ -106,7 +106,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: height * 0.05,
+                          height: height * 0.03,
                         ),
                         BalanceCard(
                             income: context
@@ -256,7 +256,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 content: SizedBox(
                   height: height * 0.33,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Column(

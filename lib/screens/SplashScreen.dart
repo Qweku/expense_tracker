@@ -19,22 +19,28 @@ class SplashScreen extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height:height*0.5,
-            child: Image.asset('assets/splash-pic.jpg',fit: BoxFit.cover,width: width,),
+            height: height * 0.5,
+            child: Image.asset(
+              'assets/splash-pic.jpg',
+              fit: BoxFit.cover,
+              width: width,
+            ),
           ),
           Expanded(
             child: Container(
               padding: EdgeInsets.all(width * 0.05),
-             
               color: primaryColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height:height*0.03),
-                  Text('Take control of your finances',
-                      style: theme.textTheme.headline2!.copyWith(fontSize: 50)),
-                 
+                  SizedBox(height: height * 0.03),
+                  SizedBox(
+                    width: width*0.6,
+                    child: Text('Take control of your finances',
+                        style:
+                            theme.textTheme.headline2!.copyWith(fontSize: 50)),
+                  ),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(

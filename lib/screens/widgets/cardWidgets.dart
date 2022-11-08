@@ -59,7 +59,7 @@ class AccountCard extends StatelessWidget {
                                     color: primaryColorLight)),
                             Text(balance,
                                 style: headline2.copyWith(
-                                    fontSize: 50, color: primaryColorLight)),
+                                    fontSize: 40, color: primaryColorLight)),
                             //Text('.50', style: headline2),
                           ],
                         ),
@@ -171,7 +171,7 @@ class BalanceCard extends StatelessWidget {
       child: Stack(
         children: [
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Column(
                 children: [
@@ -187,7 +187,7 @@ class BalanceCard extends StatelessWidget {
                           style: headline2.copyWith(color: primaryColorLight)),
                       Text(balance,
                           style: headline2.copyWith(
-                              fontSize: 60, color: primaryColorLight)),
+                              fontSize: 40, color: primaryColorLight)),
                       //Text('.50', style: theme.textTheme.headline2),
                     ],
                   ),

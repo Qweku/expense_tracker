@@ -46,7 +46,7 @@ class _AccountListState extends State<AccountList> {
                   height: height * 0.3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Column(
                         children: [
@@ -173,9 +173,9 @@ class _AccountListState extends State<AccountList> {
 
   onNotificationLower(ReceivedNotification receivedNotification) {}
   onNotificationClick(String payload) {
-    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //   return NotificationScreen();
-    // }));
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return NotificationScreen();
+    }));
   }
 
   void bootUp() async {
