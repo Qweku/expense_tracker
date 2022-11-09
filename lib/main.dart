@@ -21,16 +21,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Expense Tracker',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.green,
           fontFamily: 'Federo',
           primaryColor: Color.fromARGB(255, 9, 71, 37),
           primaryColorDark: const Color.fromARGB(255, 0, 4, 51),
           primaryColorLight: Color.fromARGB(255, 202, 181, 18),
           textTheme: const TextTheme(
               headline1: TextStyle(fontSize: 25, color: Colors.black),
-              headline2: TextStyle(fontSize: 25, color: Colors.white),
+              headline2: TextStyle(fontSize: 25, color: Color.fromARGB(255, 0, 0, 0)),
               bodyText1: TextStyle(fontSize: 14, color: Colors.black),
-              bodyText2: TextStyle(fontSize: 14, color: Colors.white))),
+              bodyText2: TextStyle(fontSize: 14, color: Color.fromARGB(255, 0, 0, 0)))),
       home: const SplashScreen(),
     );
   }

@@ -39,7 +39,7 @@ class SplashScreen extends StatelessWidget {
                     width: width*0.6,
                     child: Text('Take control of your finances',
                         style:
-                            theme.textTheme.headline2!.copyWith(fontSize: 50)),
+                           headline2.copyWith(fontSize: 50)),
                   ),
                   Align(
                     alignment: Alignment.bottomRight,

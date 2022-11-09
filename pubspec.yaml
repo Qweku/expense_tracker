@@ -43,6 +43,13 @@ dependencies:
   flutter_local_notifications: ^12.0.3
   rxdart: ^0.27.5
   intl: ^0.17.0
+  datetime_picker_formfield: ^2.0.1
+  path_provider:
+  share_plus:
+  screenshot:
+  permission_handler: 
+  pdf:
+  custom_date_range_picker: ^1.0.6
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +83,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/app-logo.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
