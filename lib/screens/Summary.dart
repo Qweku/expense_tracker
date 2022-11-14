@@ -5,6 +5,7 @@ import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/components/textField-widget.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
+import 'package:expense_tracker/screens/AccountsList.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -44,11 +45,12 @@ class _SummaryScreenState extends State<SummaryScreen> {
       lastDate: DateTime(2100),
     );
     if (newRange == null) return;
-    setState(() {
-      dateRange = newRange;
-      fromDate.text = dateRange.start.toString();
-      toDate.text = dateRange.end.toString();
-    });
+    // setState(() {
+    dateRange = newRange;
+    fromDate.text = dateformat.format(dateRange.start);
+    toDate.text = dateformat.format(dateRange.end);
+    // });
+    filter(dateRange.start, dateRange.end);
   }
 
   shareImage() async {
@@ -92,7 +94,23 @@ class _SummaryScreenState extends State<SummaryScreen> {
     }
   }
 
-  List<DateTime> newDates = [];
+  List<TransactionModel> filteredTranscations = [];
+  bool isFiltered = false;
+  void filter(DateTime from, DateTime to) {
+    filteredTranscations.clear();
+    for (TransactionModel transaction
+        in (widget.accountModel.transactions ?? <TransactionModel>[])) {
+      if (dateformat.parse(transaction.date ?? '').isBefore(from) ||
+          dateformat.parse(transaction.date ?? '').isAfter(to)) {
+        continue;
+      }
+      filteredTranscations.add(transaction);
+    }
+    setState(() {
+      isFiltered = true;
+    });
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,40 +121,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
       return date.add(Duration(days: index));
     });
-
-    bool isFiltered() {
-      for (int i = 0;
-          i <
-              context
-                  .read<TransactionProvider>()
-                  .accountList
-                  .singleWhere((element) =>
-                      element.accountName == widget.accountModel.accountName)
-                  .transactions!
-                  .length;
-          i++) {
-        if (DateFormat.yMMMd()
-                .parse(context
-                    .read<TransactionProvider>()
-                    .accountList
-                    .singleWhere((element) =>
-                        element.accountName == widget.accountModel.accountName)
-                    .transactions![i]
-                    .date!)
-                .day ==
-            filteredDates[i].day) {
-          newDates.add(DateFormat.yMMMd().parse(context
-              .read<TransactionProvider>()
-              .accountList
-              .singleWhere((element) =>
-                  element.accountName == widget.accountModel.accountName)
-              .transactions![i]
-              .date!));
-          return true;
-        }
-      }
-      return false;
-    }
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -174,6 +158,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         color: Colors.white,
                         style: bodyText1,
                         hintText: 'From',
+                        onChanged: (p0) {
+                          if (p0 != null && toDate.text.isNotEmpty) {
+                            filter(p0, dateformat.parse(toDate.text));
+                          } else {
+                            setState(() {
+                              isFiltered = false;
+                            });
+                          }
+                        },
                         prefixIcon: Icon(Icons.calendar_today,
                             color: primaryColorLight, size: 15),
                       ),
@@ -193,6 +186,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         color: Colors.white,
                         style: bodyText1,
                         hintText: 'To',
+                        onChanged: (p0) {
+                          if (p0 != null && fromDate.text.isNotEmpty) {
+                            filter(dateformat.parse(fromDate.text), p0);
+                          } else {
+                            setState(() {
+                              isFiltered = false;
+                            });
+                          }
+                        },
                         prefixIcon: Icon(Icons.calendar_today,
                             color: primaryColorLight, size: 15),
                       ),
@@ -340,70 +342,124 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                       ],
                                     ),
                                   )
-                                : ListView(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    children: List.generate(
-                                        isFiltered()
-                                            ? newDates.length
-                                            : (context
-                                                    .watch<
-                                                        TransactionProvider>()
-                                                    .accountList
-                                                    .singleWhere((element) =>
-                                                        element.accountName ==
-                                                        widget.accountModel
-                                                            .accountName)
-                                                    .transactions ??= [])
+                                : isFiltered
+                                    ? filteredTranscations.isEmpty
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.mood_bad,
+                                                  color: primaryColor,
+                                                  size: 50,
+                                                ),
+                                                Text(
+                                                  'No Transactions Range',
+                                                  style: headline1,
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : ListView(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            children: List.generate(
+                                                filteredTranscations.length,
+                                                (index) => SummaryListItem(
+                                                      item:
+                                                          filteredTranscations[
+                                                                  index]
+                                                              .transactionItem!,
+                                                      date:
+                                                          filteredTranscations[
+                                                                  index]
+                                                              .date!,
+                                                      transactionType:
+                                                          filteredTranscations[
+                                                                  index]
+                                                              .isCredit!,
+                                                      amount:
+                                                          filteredTranscations[
+                                                                  index]
+                                                              .price!
+                                                              .toStringAsFixed(
+                                                                  2),
+                                                      expenseOrIncome:
+                                                          filteredTranscations[
+                                                                  index]
+                                                              .isCredit!,
+                                                    )))
+                                    : ListView(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: List.generate(
+                                            (context
+                                                        .watch<
+                                                            TransactionProvider>()
+                                                        .accountList
+                                                        .singleWhere((element) =>
+                                                            element
+                                                                .accountName ==
+                                                            widget.accountModel
+                                                                .accountName)
+                                                        .transactions ??
+                                                    [])
                                                 .length,
-                                        (index) => SummaryListItem(
-                                              item: context
-                                                  .read<TransactionProvider>()
-                                                  .accountList
-                                                  .singleWhere((element) =>
-                                                      element.accountName ==
-                                                      widget.accountModel
-                                                          .accountName)
-                                                  .transactions![index]
-                                                  .transactionItem!,
-                                              date: context
-                                                  .read<TransactionProvider>()
-                                                  .accountList
-                                                  .singleWhere((element) =>
-                                                      element.accountName ==
-                                                      widget.accountModel
-                                                          .accountName)
-                                                  .transactions![index]
-                                                  .date!,
-                                              transactionType: context
-                                                  .read<TransactionProvider>()
-                                                  .accountList
-                                                  .singleWhere((element) =>
-                                                      element.accountName ==
-                                                      widget.accountModel
-                                                          .accountName)
-                                                  .transactions![index]
-                                                  .isCredit!,
-                                              amount: context
-                                                  .read<TransactionProvider>()
-                                                  .accountList
-                                                  .singleWhere((element) =>
-                                                      element.accountName ==
-                                                      widget.accountModel
-                                                          .accountName)
-                                                  .transactions![index]
-                                                  .price!
-                                                  .toStringAsFixed(2),
-                                              expenseOrIncome: context
-                                                  .read<TransactionProvider>()
-                                                  .accountList
-                                                  .singleWhere((element) =>
-                                                      element.accountName ==
-                                                      widget.accountModel
-                                                          .accountName)
-                                                  .transactions![index]
-                                                  .isCredit!,
-                                            )))),
+                                            (index) => SummaryListItem(
+                                                  item: context
+                                                      .read<
+                                                          TransactionProvider>()
+                                                      .accountList
+                                                      .singleWhere((element) =>
+                                                          element.accountName ==
+                                                          widget.accountModel
+                                                              .accountName)
+                                                      .transactions![index]
+                                                      .transactionItem!,
+                                                  date: context
+                                                      .read<
+                                                          TransactionProvider>()
+                                                      .accountList
+                                                      .singleWhere((element) =>
+                                                          element.accountName ==
+                                                          widget.accountModel
+                                                              .accountName)
+                                                      .transactions![index]
+                                                      .date!,
+                                                  transactionType: context
+                                                      .read<
+                                                          TransactionProvider>()
+                                                      .accountList
+                                                      .singleWhere((element) =>
+                                                          element.accountName ==
+                                                          widget.accountModel
+                                                              .accountName)
+                                                      .transactions![index]
+                                                      .isCredit!,
+                                                  amount: context
+                                                      .read<
+                                                          TransactionProvider>()
+                                                      .accountList
+                                                      .singleWhere((element) =>
+                                                          element.accountName ==
+                                                          widget.accountModel
+                                                              .accountName)
+                                                      .transactions![index]
+                                                      .price!
+                                                      .toStringAsFixed(2),
+                                                  expenseOrIncome: context
+                                                      .read<
+                                                          TransactionProvider>()
+                                                      .accountList
+                                                      .singleWhere((element) =>
+                                                          element.accountName ==
+                                                          widget.accountModel
+                                                              .accountName)
+                                                      .transactions![index]
+                                                      .isCredit!,
+                                                )))),
                       ),
                       Divider(
                         color: Colors.grey,
