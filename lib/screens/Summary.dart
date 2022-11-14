@@ -207,6 +207,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     decoration: BoxDecoration(color: Colors.white),
                     child: Column(children: [
                       Padding(
+                          padding: EdgeInsets.all(width * 0.03),
+                          child: Text(
+                              "${dateformat.format(DateTime.now())} ${timeformat.format(DateTime.now())}")),
+                      Padding(
                         padding: EdgeInsets.all(width * 0.05),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
