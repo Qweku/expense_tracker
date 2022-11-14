@@ -148,6 +148,7 @@ class DateTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Color hintColor;
+  final Function(DateTime?)? onChanged;
   const DateTextField(
       {Key? key,
       this.hintText,
@@ -157,14 +158,14 @@ class DateTextField extends StatelessWidget {
       this.style,
       this.prefixIcon,
       this.suffixIcon,
+      this.onChanged,
       this.hintColor = Colors.grey})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     //final fromDate = TextEditingController();
-    final dateformat = DateFormat("yyyy-MM-dd");
-    //final theme = Theme.of(context);
+     //final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 0,
@@ -185,7 +186,7 @@ class DateTextField extends StatelessWidget {
             ),
           ),
           child: DateTimeField(
-            style:   style ?? bodyText1,
+            style: style ?? bodyText1,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(color: hintColor),
@@ -204,6 +205,7 @@ class DateTextField extends StatelessWidget {
             // ]),
             format: dateformat,
             controller: controller,
+            onChanged: onChanged,
             onShowPicker: (context, currentValue) {
               return showDatePicker(
                   context: context,
