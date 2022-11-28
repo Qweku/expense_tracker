@@ -43,12 +43,12 @@ class AccountModel {
     double dr = 0;
     double cr = 0;
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == 'expense') {
+      if (element.isCredit == 'debit') {
         dr += (element.price ??= 0);
       }
     }
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == 'income') {
+      if (element.isCredit == 'credit') {
         cr += (element.price ??= 0);
       }
     }
@@ -58,7 +58,7 @@ class AccountModel {
   double get currentIncome {
     double cr = balance ?? 0;
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == 'income') {
+      if (element.isCredit == 'credit') {
         cr += (element.price ??= 0);
       }
     }
@@ -68,7 +68,7 @@ class AccountModel {
   double get currentExpense {
     double dr = 0;
     for (var element in (transactions ?? <TransactionModel>[])) {
-      if (element.isCredit == 'expense') {
+      if (element.isCredit == 'debit') {
         dr += (element.price ??= 0);
       }
     }

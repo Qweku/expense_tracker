@@ -13,6 +13,7 @@ import 'package:expense_tracker/screens/Summary.dart';
 import 'package:expense_tracker/screens/widgets/bottomSheetWidget.dart';
 import 'package:expense_tracker/screens/widgets/cardWidgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   bool isActive = false;
   bool error = false;
   bool isEdit = false;
-  String expenseOrIncome = 'expense';
+  String expenseOrIncome = 'debit';
   LocalStorage storage = LocalStorage('accounts');
   bool timerHasStarted = false;
   TextEditingController itemName = TextEditingController();
@@ -48,6 +49,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
       timer.cancel();
     });
   }
+  ScrollController controller = ScrollController();
 
   Option? _option = Option.expense;
 
@@ -55,6 +57,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
   void initState() {
     // _addTrxn();
     super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.animateTo(controller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 10), curve: Curves.easeInOut);
+    });
   }
 
   @override
@@ -121,7 +127,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         SizedBox(
                           height: height * 0.07,
                         ),
-                        Text("Expenses for",
+                        Text("Transactions for",
                             style:
                                 headline1.copyWith(color: primaryColorLight)),
                         Text(
@@ -207,7 +213,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               ),
                             )
                           : ListView(
+                            controller: controller,
                               physics: const BouncingScrollPhysics(),
+                              reverse: true,
                               padding: EdgeInsets.symmetric(
                                   horizontal: width * 0.01),
                               children: List.generate(
@@ -355,7 +363,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               onChanged: (Option? value) {
                                 setState(() {
                                   _option = value;
-                                  expenseOrIncome = 'expense';
+                                  expenseOrIncome = 'debit';
                                 });
                               },
                             ),
@@ -370,7 +378,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               onChanged: (Option? value) {
                                 setState(() {
                                   _option = value;
-                                  expenseOrIncome = 'income';
+                                  expenseOrIncome = 'credit';
                                 });
                               },
                             ),
@@ -413,7 +421,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
-                                    "An expense of ${trxn.price} cedis was deducted. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                                    "Your account has been debited ${trxn.price} cedis. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
 
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
@@ -439,7 +447,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 time: timeformat.format(DateTime.now()),
                                 title: "Balance Updated",
                                 body:
-                                    "An income of ${trxn.price} cedis was added. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
+                                    "Your account has been credited ${trxn.price} cedis. New balance is ${context.read<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel!.accountName!).remainingBalance.toStringAsFixed(2)} cedis.");
 
                             Provider.of<TransactionProvider>(context,
                                     listen: false)
@@ -489,6 +497,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           error = false;
                           itemName.clear();
                           amount.clear();
+                          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.animateTo(controller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 10), curve: Curves.easeInOut);
+    });
 
                           Navigator.pop(context);
                         }

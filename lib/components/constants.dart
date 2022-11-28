@@ -29,7 +29,7 @@ String currentTime = "$hour:${min < 10 ? "0$min" : "$min"}";
 String today = "$day ${months[month - 1]} $year";
 
 DateFormat timeformat = DateFormat.Hm();
-DateFormat dateformat = DateFormat.yMMMd();
+DateFormat dateformat = DateFormat.yMd();
 
 List<String> months = [
   'Jan',

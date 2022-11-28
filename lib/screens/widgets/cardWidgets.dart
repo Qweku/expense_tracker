@@ -122,10 +122,10 @@ class TransactionListCard extends StatelessWidget {
             leading: CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(
-                expenseOrIncome == "expense"
+                expenseOrIncome == "debit"
                     ? Icons.arrow_downward
                     : Icons.arrow_upward,
-                color: expenseOrIncome == "expense"
+                color: expenseOrIncome == "debit"
                     ? primaryColorLight
                     : primaryColor,
               ),
@@ -135,10 +135,10 @@ class TransactionListCard extends StatelessWidget {
             subtitle: Text(todayDate,
                 style: headline1.copyWith(color: Colors.grey, fontSize: 12)),
             trailing: Text(
-                '${expenseOrIncome == 'income' ? '+' : "-"}GHS$amount',
+                '${expenseOrIncome == 'credit' ? '+' : "-"}GHS$amount',
                 style: bodyText1.copyWith(
                     fontSize: 17,
-                    color: expenseOrIncome == 'income'
+                    color: expenseOrIncome == 'credit'
                         ? primaryColor
                         : primaryColorLight)),
           ),

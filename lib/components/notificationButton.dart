@@ -1,5 +1,6 @@
 
 
+import 'package:expense_tracker/components/constants.dart';
 import 'package:flutter/material.dart';
 
 class NotificationIconButton extends StatelessWidget {
@@ -32,7 +33,7 @@ class NotificationIconButton extends StatelessWidget {
                         shape: BoxShape.circle),
                     child: Text(
                       '${quantity < 10 ? quantity : '9+'}',
-                      style: theme.textTheme.bodyText2!.copyWith(fontSize: 9),
+                      style: bodyText2.copyWith(fontSize: 9),
                     ),
                   ))
       ],

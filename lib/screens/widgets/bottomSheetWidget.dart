@@ -34,7 +34,7 @@ class BottomSheetChild extends StatelessWidget {
           ),
           const SizedBox(height: 5),
            Text(title,
-              style: theme.textTheme.bodyText2!.copyWith(fontSize: 14)),
+              style: bodyText2.copyWith(fontSize: 14)),
         ],
       ),
       onTap: onTap,
