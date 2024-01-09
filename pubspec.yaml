@@ -39,9 +39,9 @@ dependencies:
   provider:
   localstorage:
   gsheets:
-  flutter_local_notifications: ^15.1.1
+  flutter_local_notifications: ^16.3.0
   rxdart: ^0.27.5
-  intl: ^0.17.0
+  intl: ^0.19.0
   datetime_picker_formfield_new:
   path_provider:
   share_plus:
