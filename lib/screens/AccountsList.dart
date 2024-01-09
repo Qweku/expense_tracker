@@ -379,7 +379,7 @@ class _AccountListState extends State<AccountList> {
                     ),
                     Text(
                       "Do you really want to exit?",
-                      style: theme.textTheme.bodyText1,
+                      style: theme.textTheme.bodyLarge,
                     ),
                   ],
                 ),

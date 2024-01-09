@@ -27,10 +27,10 @@ class MyApp extends StatelessWidget {
           primaryColorDark: const Color.fromARGB(255, 0, 4, 51),
           primaryColorLight: Color.fromARGB(255, 202, 181, 18),
           textTheme: const TextTheme(
-              headline1: TextStyle(fontSize: 25, color: Colors.black),
-              headline2: TextStyle(fontSize: 25, color: Color.fromARGB(255, 0, 0, 0)),
-              bodyText1: TextStyle(fontSize: 14, color: Colors.black),
-              bodyText2: TextStyle(fontSize: 14, color: Color.fromARGB(255, 0, 0, 0)))),
+              displayLarge: TextStyle(fontSize: 25, color: Colors.black),
+              displayMedium: TextStyle(fontSize: 25, color: Color.fromARGB(255, 0, 0, 0)),
+              bodyLarge: TextStyle(fontSize: 14, color: Colors.black),
+              bodyMedium: TextStyle(fontSize: 14, color: Color.fromARGB(255, 0, 0, 0)))),
       home: const SplashScreen(),
     );
   }

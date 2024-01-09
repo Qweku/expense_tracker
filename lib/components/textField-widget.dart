@@ -2,7 +2,6 @@
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:expense_tracker/components/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText, label;

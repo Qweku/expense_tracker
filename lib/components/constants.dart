@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 final double width =
-    MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
+    MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
 final double height =
-    MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.height;
+    MediaQueryData.fromView(WidgetsBinding.instance.window).size.height;
 
 Color primaryColor = Color.fromARGB(255, 8, 112, 55);
 Color primaryColorDark = const Color.fromARGB(255, 0, 4, 51);

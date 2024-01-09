@@ -37,7 +37,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text('Notifications',
-            style: theme.textTheme.headline1!.copyWith(fontSize: 18)),
+            style: theme.textTheme.displayLarge!.copyWith(fontSize: 18)),
       ),
       body: Padding(
           padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
