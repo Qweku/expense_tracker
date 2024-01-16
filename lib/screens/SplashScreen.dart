@@ -18,7 +18,7 @@ class SplashScreen extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: height * 0.5,
+            height: height * 0.48,
             child: Image.asset(
               'assets/splash-pic.jpg',
               fit: BoxFit.cover,
@@ -33,12 +33,11 @@ class SplashScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: height * 0.03),
+                  SizedBox(height: height * 0.01),
                   SizedBox(
-                    width: width*0.6,
+                    width: width * 0.6,
                     child: Text('Take control of your finances',
-                        style:
-                           headline2.copyWith(fontSize: 50)),
+                        style: headline2.copyWith(fontSize: 48)),
                   ),
                   Align(
                     alignment: Alignment.bottomRight,
@@ -50,7 +49,7 @@ class SplashScreen extends StatelessWidget {
                                 builder: (context) => const AccountList()));
                       },
                       child: Container(
-                        padding: EdgeInsets.all(width * 0.05),
+                        padding: EdgeInsets.all(width * 0.04),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             color: Colors.black),
