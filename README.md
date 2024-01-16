@@ -5,6 +5,9 @@ Welcome to Flutter Expense Tracker! This Flutter-based app helps users track the
 ## Overview
 Flutter Expense Tracker is a user-friendly application that allows individuals to monitor their spending, categorize expenses, set budgets, and visualize their financial habits.
 
+Download the latest release of Flutter Expense Tracker APK and start exploring the budgeting effortlessly:
+[Download Flutter Expense Tracker APK](readme/Flutter_expense_tracker.apk)
+
 ## Requirements
 - Flutter SDK
 - Dart SDK
