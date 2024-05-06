@@ -20,7 +20,7 @@ class NotificationIconButton extends StatelessWidget {
         IconButton(
             onPressed: onTap,
             icon:
-                const Icon(Icons.notifications, color: Colors.white, size: 30)),
+                 Icon(Icons.notifications, color: theme.colorScheme.secondary, size: 30)),
         Positioned(
             top: height * 0.005,
             left: width * 0.03,

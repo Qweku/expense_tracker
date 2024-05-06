@@ -1,5 +1,4 @@
 // ignore_for_file: file_names
-
 import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/models/NotificationModel.dart';
@@ -115,4 +114,66 @@ class TransactionProvider with ChangeNotifier {
     isFiltered = true;
     notifyListeners();
   }
+
+  //calculate total expense for each month
+  Future<Map<String, double>> calculateMonthlyTotals( AccountModel accountModel) async {
+    
+
+    Map<String, double> monthlyTotals = {};
+
+    for (TransactionModel transaction
+        in (accountModel.transactions ?? <TransactionModel>[])) {
+      //extract the month from the date of the expense
+      String yearMonth = '${dateformat.parse(transaction.date?? '').year}-${dateformat.parse(transaction.date?? '').month}';
+
+      //If the month is not yet in the map initialize to 0
+      if (!monthlyTotals.containsKey(yearMonth)) {
+        monthlyTotals[yearMonth] = 0;
+      }
+
+      monthlyTotals[yearMonth] = monthlyTotals[yearMonth]! + transaction.price!;
+    }
+     
+    return monthlyTotals;
+    
+  }
+
+// claculate current month total
+  Future<double> calculateCurrentMonthTotal(AccountModel accountModel) async {
+   
+
+    int currentMonth = DateTime.now().month;
+    int currentYear = DateTime.now().year;
+
+    List<TransactionModel> currentMonthExpenses = accountModel.transactions??<TransactionModel>[].where((expense) {
+      return dateformat.parse(expense.date?? '').month == currentMonth &&
+          dateformat.parse(expense.date?? '').year == currentYear;
+    }).toList();
+
+    double total =
+        currentMonthExpenses.fold(0, (sum, expense) => sum + expense.price!);
+
+    return total;
+  }
+
+  int getStartMonth(AccountModel accountModel) {
+    if (accountModel.transactions == null) {
+      return DateTime.now().month;
+    }
+
+    accountModel.transactions??<TransactionModel>[].sort((a, b) => a.date!.compareTo(b.date!));
+
+    return dateformat.parse(accountModel.transactions!.first.date ?? "").month;
+  }
+
+  int getStartYear(AccountModel accountModel) {
+    if (accountModel.transactions==null) {
+      return DateTime.now().year;
+    }
+
+    accountModel.transactions??<TransactionModel>[].sort((a, b) => a.date!.compareTo(b.date!));
+
+    return dateformat.parse(accountModel.transactions!.first.date ?? "").year;
+  }
+
 }

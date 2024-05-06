@@ -98,8 +98,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
     filteredTransactions.clear();
     for (TransactionModel transaction
         in (widget.accountModel.transactions ?? <TransactionModel>[])) {
-      if (dateformat.parse(transaction.date ?? '').isBefore(from) ||
-          dateformat.parse(transaction.date ?? '').isAfter(to)) {
+      if (dateformat.parse(transaction.date?? '').isBefore(from) ||
+          dateformat.parse(transaction.date?? '').isAfter(to)) {
         continue;
       }
       filteredTransactions.add(transaction);
@@ -435,7 +435,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                               date:
                                                                   filteredTransactions[
                                                                           index]
-                                                                      .date!,
+                                                                      .date!.toString(),
                                                               transactionType:
                                                                   filteredTransactions[
                                                                           index]
@@ -495,7 +495,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                                       .accountName)
                                                               .transactions![
                                                                   index]
-                                                              .date!,
+                                                              .date!.toString(),
                                                           transactionType: context
                                                               .read<
                                                                   TransactionProvider>()

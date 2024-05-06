@@ -39,7 +39,7 @@ dependencies:
   provider:
   localstorage:
   gsheets:
-  flutter_local_notifications: ^16.3.0
+  flutter_local_notifications: ^17.1.1
   rxdart: ^0.27.5
   intl: ^0.19.0
   datetime_picker_formfield_new:
@@ -48,18 +48,23 @@ dependencies:
   screenshot:
   permission_handler: 
   pdf:
+  sizer: ^2.0.15
+  fl_chart: ^0.67.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.2
   flutter_launcher_icons:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: true
-  remove_alpha_ios: true
+  ios: truec
   image_path: "assets/launch_icon.png"
+  adaptive_icon_background: "#ffff"
+  adaptive_icon_foreground: "assets/launch_icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
   # adaptive_icon_foreground: "assets/app_Icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to

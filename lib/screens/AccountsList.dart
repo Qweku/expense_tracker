@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class AccountList extends StatefulWidget {
   const AccountList({
@@ -40,11 +41,14 @@ class _AccountListState extends State<AccountList> {
         barrierDismissible: false,
         context: context,
         builder: (c) => StatefulBuilder(builder: (context, setState) {
+              var theme=Theme.of(context);
               return AlertDialog(
-                shape: RoundedRectangleBorder(
+                insetPadding: EdgeInsets.symmetric(horizontal: 3.w),
+                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 content: SizedBox(
-                  height: height * 0.3,
+                  height: 30.h,
+                  width: 80.w,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -52,28 +56,28 @@ class _AccountListState extends State<AccountList> {
                       Column(
                         children: [
                           Text(isEdit ? 'Edit Account' : 'Add Account',
-                              style: bodyText1.copyWith(
+                              style: TextStyle(
                                   letterSpacing: 2,
-                                  fontSize: 20,
-                                  color: primaryColor)),
+                                  fontSize: 2.0.h,
+                                  )),
                           SizedBox(height: height * 0.01),
                           //Divider
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(
-                                width: width * 0.2,
-                                child: Divider(color: primaryColor),
+                                width: 20.w,
+                                child: Divider(color: theme.colorScheme.primary),
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: height * 0.01),
                                 child: Icon(Icons.edit,
-                                    color: primaryColorLight, size: 20),
+                                    color: theme.colorScheme.inversePrimary, size: 20),
                               ),
                               SizedBox(
-                                width: width * 0.2,
-                                child: Divider(color: primaryColor),
+                                width: 20.w,
+                                child: Divider(color: theme.colorScheme.primary),
                               )
                             ],
                           ),
@@ -86,23 +90,22 @@ class _AccountListState extends State<AccountList> {
                           : Container(),
                       CustomTextField(
                         controller: accountName,
-                        borderColor: Colors.grey,
-                        style: bodyText1,
-                        hintText: 'Account Name',
+                        borderColor: theme.colorScheme.primary,
+                         hintText: 'Account Name',
                         prefixIcon: Icon(
                           Icons.credit_card,
-                          color: primaryColorLight,
+                          color: theme.colorScheme.inversePrimary,
                         ),
                       ),
                       CustomTextField(
                         controller: balance,
                         keyboard: TextInputType.number,
-                        borderColor: Colors.grey,
+                        borderColor: theme.colorScheme.primary,
                         hintText: 'Balance',
                         style: bodyText1,
                         prefixIcon: Icon(
                           Icons.monetization_on,
-                          color: primaryColorLight,
+                          color: theme.colorScheme.inversePrimary,
                         ),
                       )
                     ],
@@ -185,7 +188,7 @@ class _AccountListState extends State<AccountList> {
                       },
                       width: width * 0.4,
                       buttonText: isEdit?'Done':'Add',
-                      color: primaryColor,
+                      color: theme.colorScheme.secondary,
                     ),
                   )
                 ],
@@ -221,17 +224,18 @@ class _AccountListState extends State<AccountList> {
 
   @override
   Widget build(BuildContext context) {
+    var theme=Theme.of(context);
     return WillPopScope(
       onWillPop: () => _backButton(context),
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addAccount(0),
-          backgroundColor: primaryColor,
+          backgroundColor: theme.colorScheme.secondary,
           child: const Icon(Icons.add, color: Colors.white),
         ),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: primaryColor,
+          //backgroundColor: primaryColor,
           actions: [
             Padding(
               padding: EdgeInsets.only(right: width * 0.03),
@@ -264,11 +268,9 @@ class _AccountListState extends State<AccountList> {
                 Container(
                   height: height * 0.3,
                   width: width,
-                  color: primaryColor,
+                  color: theme.colorScheme.primary,
                 ),
-                Expanded(
-                  child: Container(color: Color.fromARGB(255, 238, 238, 238)),
-                ),
+                
               ],
             ),
             Padding(
@@ -280,9 +282,9 @@ class _AccountListState extends State<AccountList> {
                       height: height * 0.07,
                     ),
                     Text("Welcome,",
-                        style: headline2.copyWith(
-                          color: primaryColorLight,
-                          fontSize: 30,
+                        style: TextStyle(
+                          color: theme.colorScheme.inversePrimary,
+                          fontSize: 3.0.h,
                         )),
                     SizedBox(
                       height: height * 0.01,
@@ -291,8 +293,8 @@ class _AccountListState extends State<AccountList> {
                       width: width * 0.7,
                       child: Text(
                         "Check your finance status from these list ",
-                        style: headline2.copyWith(
-                          fontSize: 30,
+                        style: TextStyle(
+                          fontSize: 3.0.h,
                         ),
                       ),
                     ),

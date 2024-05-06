@@ -91,7 +91,7 @@ class TransactionModel {
         transactionItem: json["transactionItem"] ?? '',
         price: json["price"] ?? 0,
         isCredit: json["isCredit"] ?? false,
-        date: json["date"] ?? '',
+        date: json["date"] ?? "",
         id: json["id"] ?? 0,
       );
 
@@ -99,7 +99,7 @@ class TransactionModel {
         "transactionItem": transactionItem ?? '',
         "price": price ?? 0,
         "isCredit": isCredit ?? false,
-        "date": date ?? '',
+        "date": date ?? "",
         "id": id ?? 0,
       };
 }
