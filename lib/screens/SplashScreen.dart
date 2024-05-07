@@ -21,10 +21,10 @@ class SplashScreen extends StatelessWidget {
             Image.asset(
               'assets/app_Icon.png',
               
-              width: 40.w,
+              height: 40.h,
             ),
-            SizedBox(height: 12.h),
-            Text('Take control of your finances',textAlign: TextAlign.center,
+            SizedBox(height: 7.h),
+            Text('Take control and organize your finances',textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 4.8.h)),
                 SizedBox(height:5.h),
             GestureDetector(
@@ -38,9 +38,9 @@ class SplashScreen extends StatelessWidget {
                 padding: EdgeInsets.all(width * 0.04),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: theme.colorScheme.secondary),
+                    color: theme.colorScheme.inversePrimary),
                 child:  Icon(Icons.arrow_forward_ios,
-                    color: Colors.white, size: 3.0.h),
+                    color: Colors.white, size: 4.0.h),
               ),
             )
           ],

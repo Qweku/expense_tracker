@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:expense_tracker/bar_graph/bar_graph.dart';
 import 'package:expense_tracker/components/button_widget.dart';
@@ -90,20 +91,22 @@ class _OverviewScreenState extends State<OverviewScreen> {
       int currentMonth = DateTime.now().month;
       int currentYear = DateTime.now().year;
 
+      log(startMonth.toString());
+
       //calculate the number of months since the first month
       int monthCount =
           calculateMonthCount(startYear, startMonth, currentYear, currentMonth);
 
       List<TransactionModel> currentMonthExpenses =
           value.transactionList.where((expense) {
-        return dateformat.parse( expense.date?? '').year == currentYear &&
-            dateformat.parse(expense.date?? '').month == currentMonth;
+        return dateformat.parse(expense.date ?? '').year == currentYear &&
+            dateformat.parse(expense.date ?? '').month == currentMonth;
       }).toList();
       return Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: FloatingActionButton(
             onPressed: () => _addTrxn(0),
-            backgroundColor: theme.colorScheme.secondary,
+            backgroundColor: theme.colorScheme.inversePrimary,
             child: const Icon(Icons.add, color: Colors.white),
           ),
           appBar: AppBar(
@@ -115,7 +118,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   child: IconButton(
                     icon: Icon(
                       Icons.receipt_long,
-                      color: theme.colorScheme.secondary,
+                      color: theme.colorScheme.inversePrimary,
                       size: 3.0.h,
                     ),
                     onPressed: () {
@@ -154,65 +157,73 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       SizedBox(
                         height: height * 0.03,
                       ),
-                      SizedBox(
-                        height: 20.h,
-                        child: FutureBuilder(
-                            future: _monthlyTotalsFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                Map<String, double> monthlyTotals =
-                                    snapshot.data ?? {};
+                     
+                      // SizedBox(
+                      //   height: 20.h,
+                      //   child: FutureBuilder(
+                      //       future: _monthlyTotalsFuture,
+                      //       builder: (context, snapshot) {
+                      //         if (snapshot.connectionState ==
+                      //             ConnectionState.done) {
+                      //           Map<String, double> monthlyTotals =
+                      //               snapshot.data ?? {};
 
-                                List<double> monthlySummary =
-                                    List.generate(monthCount, (index) {
-                                  int year = startYear +
-                                      (startMonth + index - 1) ~/ 12;
-                                  int month = (startMonth + index - 1) % 12 + 1;
+                                
 
-                                  String yearMonthKey = '$year-$month';
+                      //           List<double> monthlySummary =
+                      //               List.generate(monthCount, (index) {
+                      //             int year = startYear +
+                      //                 (startMonth + index - 1) ~/ 12;
+                      //             int month = (startMonth + index - 1) % 12 + 1;
 
-                                  return monthlyTotals[yearMonthKey] ?? 0;
-                                });
-                                return MyBarGraph(
-                                    monthlySummary: monthlySummary,
-                                    startMonth: startMonth);
-                              } else {
-                                return const Center(
-                                  child: Text("Loading..."),
-                                );
-                              }
-                            }),
-                      ),
+                      //             String yearMonthKey = '$year-$month';
 
-                      // BalanceCard(
-                      //     income: context
-                      //         .watch<TransactionProvider>()
-                      //         .accountList
-                      //         .singleWhere((element) =>
-                      //             element.accountName ==
-                      //             widget.accountModel!.accountName!)
-                      //         .currentIncome
-                      //         .toStringAsFixed(2),
-                      //     expense: context
-                      //         .watch<TransactionProvider>()
-                      //         .accountList
-                      //         .singleWhere((element) =>
-                      //             element.accountName ==
-                      //             widget.accountModel!.accountName!)
-                      //         .currentExpense
-                      //         .toStringAsFixed(2),
-                      //     balance: context
-                      //         .watch<TransactionProvider>()
-                      //         .accountList
-                      //         .singleWhere((element) =>
-                      //             element.accountName ==
-                      //             widget.accountModel!.accountName!)
-                      //         .remainingBalance
-                      //         .toStringAsFixed(2)
-                      //     //'${widget.accountModel!.remainingBalance}',
-                      //     ),
-                   
+                      //              log(monthCount.toString());
+                      //               log(yearMonthKey.toString());
+
+                      //             return monthlyTotals[yearMonthKey] ?? 0;
+                                  
+                      //           });
+                      //           log(monthlySummary.first.toString());
+                      //           return MyBarGraph(
+                      //               monthlySummary: monthlySummary,
+                      //               startMonth: startMonth);
+                      //         } else {
+                      //           return const Center(
+                      //             child: Text("Loading..."),
+                      //           );
+                      //         }
+                      //       }),
+                      // ),
+
+                      BalanceCard(
+                          income: context
+                              .watch<TransactionProvider>()
+                              .accountList
+                              .singleWhere((element) =>
+                                  element.accountName ==
+                                  widget.accountModel!.accountName!)
+                              .currentIncome
+                              .toStringAsFixed(2),
+                          expense: context
+                              .watch<TransactionProvider>()
+                              .accountList
+                              .singleWhere((element) =>
+                                  element.accountName ==
+                                  widget.accountModel!.accountName!)
+                              .currentExpense
+                              .toStringAsFixed(2),
+                          balance: context
+                              .watch<TransactionProvider>()
+                              .accountList
+                              .singleWhere((element) =>
+                                  element.accountName ==
+                                  widget.accountModel!.accountName!)
+                              .remainingBalance
+                              .toStringAsFixed(2)
+                          //'${widget.accountModel!.remainingBalance}',
+                          ),
+                    
                     ],
                   ),
                   SizedBox(
@@ -249,14 +260,14 @@ class _OverviewScreenState extends State<OverviewScreen> {
                               children: [
                                 Icon(
                                   Icons.no_accounts,
-                                  color: theme.colorScheme.inversePrimary,
+                                  color: theme.colorScheme.primary,
                                   size: 50,
                                 ),
                                 Text(
                                   'No Transactions',
                                   style: TextStyle(
                                       fontSize: 3.h,
-                                      color: theme.colorScheme.inversePrimary),
+                                      color: theme.colorScheme.primary),
                                 ),
                               ],
                             ),
@@ -359,7 +370,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: height * 0.01),
                                 child: Icon(Icons.edit,
-                                    color: theme.colorScheme.inversePrimary,
+                                    color: theme.colorScheme.tertiary,
                                     size: 20),
                               ),
                               SizedBox(
@@ -382,7 +393,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         hintText: 'Item',
                         prefixIcon: Icon(
                           Icons.credit_card,
-                          color: theme.colorScheme.inversePrimary,
+                          color: theme.colorScheme.tertiary,
                         ),
                       ),
                       CustomTextField(
@@ -392,7 +403,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         hintText: 'Amount',
                         prefixIcon: Icon(
                           Icons.monetization_on,
-                          color: theme.colorScheme.inversePrimary,
+                          color: theme.colorScheme.tertiary,
                         ),
                       ),
                       Row(
@@ -401,7 +412,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           Expanded(
                             child: RadioListTile<Option>(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: theme.colorScheme.secondary,
+                              activeColor: theme.colorScheme.inversePrimary,
                               title: Text(
                                 'Expense',
                               ),
@@ -418,7 +429,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           Expanded(
                             child: RadioListTile<Option>(
                               contentPadding: EdgeInsets.zero,
-                              activeColor: theme.colorScheme.secondary,
+                              activeColor: theme.colorScheme.inversePrimary,
                               title: Text(
                                 'Income',
                               ),
@@ -475,6 +486,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             itemName.clear();
                             amount.clear();
                             error = false;
+                            refreshGraphData();
 
                             Navigator.pop(context);
 
@@ -515,6 +527,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             itemName.clear();
                             amount.clear();
                             error = false;
+                            refreshGraphData();
 
                             Navigator.pop(context);
 
@@ -561,6 +574,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                 .editTransaction(
                                     widget.accountModel!, trxnModel);
                             isEdit = false;
+                            refreshGraphData();
                           }
 
                           // await storage.setItem(
@@ -586,7 +600,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       },
                       width: width * 0.4,
                       buttonText: isEdit ? 'Done' : 'Add',
-                      color: theme.colorScheme.secondary,
+                      color: theme.colorScheme.inversePrimary,
                     ),
                   )
                 ],
@@ -647,6 +661,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       onTap: () async {
                         Provider.of<TransactionProvider>(context, listen: false)
                             .removeTransaction(index, widget.accountModel!);
+                        refreshGraphData();
                         Navigator.pop(context);
                       },
                       theme: theme,

@@ -67,7 +67,7 @@ class AccountCard extends StatelessWidget {
                       width: width * 0.8,
                       //padding: EdgeInsets.symmetric(vertical:height * 0.01),
                       decoration: BoxDecoration(
-                        border: Border.all(color: theme.colorScheme.secondary),
+                        border: Border.all(color: theme.colorScheme.inversePrimary),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextButton(
@@ -76,7 +76,7 @@ class AccountCard extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 1.8.h,
-                                  color: theme.colorScheme.secondary))),
+                                  color: theme.colorScheme.inversePrimary))),
                     ),
                     SizedBox(
                       height: 1.h,

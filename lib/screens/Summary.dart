@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:sizer/sizer.dart';
 
 class SummaryScreen extends StatefulWidget {
   final AccountModel accountModel;
@@ -144,9 +145,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
       return date.add(Duration(days: index));
     });
+    var theme=Theme.of(context);
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: primaryColor,
+        backgroundColor: theme.colorScheme.background,
         // floatingActionButton:
         // Column(
         //   mainAxisAlignment: MainAxisAlignment.end,
@@ -180,9 +182,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         Expanded(
                           child: DateTextField(
                             controller: fromDate,
-                            color: Colors.white,
-                            style: bodyText1,
-                            hintText: 'From',
+                            color: theme.colorScheme.primary,
+                             hintText: 'From',
                             onChanged: (p0) {
                               if (p0 != null && toDate.text.isNotEmpty) {
                                 filter(
@@ -198,24 +199,24 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               // print(isFiltered);
                             },
                             prefixIcon: Icon(Icons.calendar_today,
-                                color: primaryColorLight, size: 15),
+                                color: theme.colorScheme.tertiary, size: 15),
                           ),
                         ),
                         SizedBox(width: width * 0.01),
                         CircleAvatar(
-                            backgroundColor: primaryColorLight,
+                            backgroundColor: theme.colorScheme.inversePrimary,
                             child: IconButton(
                                 onPressed: () {
                                   filterDate();
                                 },
-                                icon: Icon(Icons.filter_alt,
-                                    color: Colors.white))),
+                                icon: const Icon(Icons.filter_alt,
+                                    ))),
                         SizedBox(width: width * 0.01),
                         Expanded(
                           child: DateTextField(
                             controller: toDate,
-                            color: Colors.white,
-                            style: bodyText1,
+                            color: theme.colorScheme.primary,
+                            
                             hintText: 'To',
                             onChanged: (p0) {
                               if (p0 != null && fromDate.text.isNotEmpty) {
@@ -232,7 +233,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               // print(isFiltered);
                             },
                             prefixIcon: Icon(Icons.calendar_today,
-                                color: primaryColorLight, size: 15),
+                                color: theme.colorScheme.tertiary, size: 15),
                           ),
                         )
                       ],
@@ -242,7 +243,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     child: Screenshot(
                       controller: screenshotController,
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.white),
+                        decoration: const BoxDecoration(color: Colors.white),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -263,7 +264,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                               headline1.copyWith(fontSize: 20)),
                                       Image.asset(
                                         'assets/app-logo.png',
-                                        width: width * 0.15,
+                                        width: 10.h,
                                       ),
                                     ]),
                               ),
@@ -346,7 +347,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 padding: EdgeInsets.symmetric(
                                     vertical: height * 0.01,
                                     horizontal: width * 0.05),
-                                color: Color.fromARGB(255, 197, 196, 196),
+                                color: const Color.fromARGB(255, 197, 196, 196),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -423,7 +424,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                   reverse: true,
                                                     shrinkWrap: true,
                                                     physics:
-                                                        NeverScrollableScrollPhysics(),
+                                                        const NeverScrollableScrollPhysics(),
                                                     children: List.generate(
                                                         filteredTransactions
                                                             .length,
@@ -454,7 +455,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                               reverse: true,
                                                 shrinkWrap: true,
                                                 physics:
-                                                    NeverScrollableScrollPhysics(),
+                                                    const NeverScrollableScrollPhysics(),
                                                 children: List.generate(
                                                     (context
                                                                 .watch<
@@ -571,17 +572,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       onTap: () => shareImage(),
                       child: CircleAvatar(
                           radius: 25,
-                          backgroundColor: primaryColorLight,
-                          child: const Icon(Icons.share, color: Colors.white)),
+                          backgroundColor: theme.colorScheme.inversePrimary,
+                          child: const Icon(Icons.share, )),
                     ),
                     SizedBox(height: height * 0.02),
                     GestureDetector(
                       onTap: getPdf,
                       child: CircleAvatar(
                           radius: 25,
-                          backgroundColor: primaryColorLight,
+                          backgroundColor: theme.colorScheme.inversePrimary,
                           child:
-                              const Icon(Icons.save_alt, color: Colors.white)),
+                              const Icon(Icons.save_alt, )),
                     ),
                   ],
                 ),

@@ -47,7 +47,7 @@ class _AccountListState extends State<AccountList> {
                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 content: SizedBox(
-                  height: 30.h,
+                  height: 40.h,
                   width: 80.w,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +94,7 @@ class _AccountListState extends State<AccountList> {
                          hintText: 'Account Name',
                         prefixIcon: Icon(
                           Icons.credit_card,
-                          color: theme.colorScheme.inversePrimary,
+                          color: theme.colorScheme.tertiary,
                         ),
                       ),
                       CustomTextField(
@@ -105,7 +105,7 @@ class _AccountListState extends State<AccountList> {
                         style: bodyText1,
                         prefixIcon: Icon(
                           Icons.monetization_on,
-                          color: theme.colorScheme.inversePrimary,
+                          color: theme.colorScheme.tertiary,
                         ),
                       )
                     ],
@@ -186,9 +186,9 @@ class _AccountListState extends State<AccountList> {
                           Navigator.pop(context);
                         }
                       },
-                      width: width * 0.4,
+                      width: 100.w,
                       buttonText: isEdit?'Done':'Add',
-                      color: theme.colorScheme.secondary,
+                      color: theme.colorScheme.inversePrimary,
                     ),
                   )
                 ],
@@ -230,7 +230,7 @@ class _AccountListState extends State<AccountList> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addAccount(0),
-          backgroundColor: theme.colorScheme.secondary,
+          backgroundColor: theme.colorScheme.inversePrimary,
           child: const Icon(Icons.add, color: Colors.white),
         ),
         appBar: AppBar(
@@ -381,7 +381,7 @@ class _AccountListState extends State<AccountList> {
                     ),
                     Text(
                       "Do you really want to exit?",
-                      style: theme.textTheme.bodyLarge,
+                      
                     ),
                   ],
                 ),
