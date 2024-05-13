@@ -3,19 +3,19 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:expense_tracker/bar_graph/bar_graph.dart';
+// import 'package:expense_tracker/bar_graph/bar_graph.dart';
 import 'package:expense_tracker/components/button_widget.dart';
 import 'package:expense_tracker/components/constants.dart';
-import 'package:expense_tracker/helper/helper_functions.dart';
+// import 'package:expense_tracker/helper/helper_functions.dart';
 import 'package:expense_tracker/models/Models.dart';
-import 'package:expense_tracker/models/NotificationModel.dart';
+// import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
-import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
+// import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
 import 'package:expense_tracker/screens/Summary.dart';
-import 'package:expense_tracker/screens/widgets/bottomSheetWidget.dart';
-import 'package:expense_tracker/screens/widgets/cardWidgets.dart';
+import 'package:expense_tracker/screens/widgets/bottom_sheet_widget.dart';
+import 'package:expense_tracker/screens/widgets/card_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+// import 'package:flutter/scheduler.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -46,16 +46,16 @@ class _OverviewScreenState extends State<OverviewScreen> {
   TextEditingController amount = TextEditingController();
 
   //futures to load graph data
-  Future<Map<String, double>>? _monthlyTotalsFuture;
-  Future<double>? _calculateCurrentMonthTotal;
+  // Future<Map<String, double>>? _monthlyTotalsFuture;
+  // Future<double>? _calculateCurrentMonthTotal;
 
   void refreshGraphData() {
-    _monthlyTotalsFuture =
-        Provider.of<TransactionProvider>(context, listen: false)
-            .calculateMonthlyTotals(widget.accountModel!);
-    _calculateCurrentMonthTotal =
-        Provider.of<TransactionProvider>(context, listen: false)
-            .calculateCurrentMonthTotal(widget.accountModel!);
+    // _monthlyTotalsFuture =
+    //     Provider.of<TransactionProvider>(context, listen: false)
+    //         .calculateMonthlyTotals(widget.accountModel!);
+    // _calculateCurrentMonthTotal =
+    //     Provider.of<TransactionProvider>(context, listen: false)
+    //         .calculateCurrentMonthTotal(widget.accountModel!);
   }
 
   void startLoading() {
@@ -73,8 +73,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
   @override
   void initState() {
     // _addTrxn();
-    super.initState();
     refreshGraphData();
+    super.initState();
+    
     // SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
     //   controller.animateTo(controller.position.maxScrollExtent,
     //       duration: const Duration(milliseconds: 10), curve: Curves.easeInOut);
@@ -87,21 +88,21 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return Consumer<TransactionProvider>(builder: (context, value, child) {
       //get dates
       int startMonth = value.getStartMonth(widget.accountModel!);
-      int startYear = value.getStartYear(widget.accountModel!);
-      int currentMonth = DateTime.now().month;
-      int currentYear = DateTime.now().year;
+      // int startYear = value.getStartYear(widget.accountModel!);
+      // int currentMonth = DateTime.now().month;
+      // int currentYear = DateTime.now().year;
 
       log(startMonth.toString());
 
       //calculate the number of months since the first month
-      int monthCount =
-          calculateMonthCount(startYear, startMonth, currentYear, currentMonth);
+      // int monthCount =
+      //     calculateMonthCount(startYear, startMonth, currentYear, currentMonth);
 
-      List<TransactionModel> currentMonthExpenses =
-          value.transactionList.where((expense) {
-        return dateformat.parse(expense.date ?? '').year == currentYear &&
-            dateformat.parse(expense.date ?? '').month == currentMonth;
-      }).toList();
+      // List<TransactionModel> currentMonthExpenses =
+      //     value.transactionList.where((expense) {
+      //   return dateformat.parse(expense.date ?? '').year == currentYear &&
+      //       dateformat.parse(expense.date ?? '').month == currentMonth;
+      // }).toList();
       return Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: FloatingActionButton(
@@ -135,7 +136,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             height: height,
             width: width,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+              padding: EdgeInsets.symmetric(horizontal: 3.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +156,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: height * 0.03,
+                        height: 3.h,
                       ),
                      
                       // SizedBox(
@@ -385,7 +386,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                       error
                           ? Text('*Field Required',
                               style: bodyText1.copyWith(
-                                  color: Color.fromARGB(255, 252, 17, 0)))
+                                  color: const Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
                       CustomTextField(
                         controller: itemName,
@@ -413,7 +414,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             child: RadioListTile<Option>(
                               contentPadding: EdgeInsets.zero,
                               activeColor: theme.colorScheme.inversePrimary,
-                              title: Text(
+                              title: const Text(
                                 'Expense',
                               ),
                               value: Option.expense,
@@ -430,7 +431,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                             child: RadioListTile<Option>(
                               contentPadding: EdgeInsets.zero,
                               activeColor: theme.colorScheme.inversePrimary,
-                              title: Text(
+                              title: const Text(
                                 'Income',
                               ),
                               value: Option.income,
@@ -598,7 +599,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                           // });
                         }
                       },
-                      width: width * 0.4,
+                      width: 100.w,
                       buttonText: isEdit ? 'Done' : 'Add',
                       color: theme.colorScheme.inversePrimary,
                     ),

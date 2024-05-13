@@ -1,10 +1,14 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:expense_tracker/components/constants.dart';
+import 'package:expense_tracker/components/screen_capture.dart';
 import 'package:expense_tracker/components/textField-widget.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,6 +22,7 @@ import 'package:sizer/sizer.dart';
 
 class SummaryScreen extends StatefulWidget {
   final AccountModel accountModel;
+
   const SummaryScreen({super.key, required this.accountModel});
 
   @override
@@ -28,7 +33,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
-  late Uint8List _imageFile;
+  final key = GlobalKey();
+ 
+
   DateTime? startDate;
   DateTime? endDate;
   DateTimeRange dateRange = DateTimeRange(
@@ -53,22 +60,38 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   shareImage() async {
-    String tempPath = (await getApplicationDocumentsDirectory()).path;
+    // final boundary =
+    //     key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    // final image = await boundary?.toImage();
+    // final byteData = await image?.toByteData(format: ImageByteFormat.png);
+    
+    // final imageBytes = byteData?.buffer.asUint8List();
+
+    String tempPath = (Directory('/storage/emulated/0/Download')).path;
     String fileName = "TransactionFile";
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    _imageFile = (await screenshotController.capture())!;
+    Uint8List _imageFile = (await screenshotController.capture())!;
 
-    if (await Permission.storage.request().isGranted) {
-      File file = await File('$tempPath/$fileName.png');
-      file.writeAsBytesSync(_imageFile);
-      await Share.shareFiles([file.path]);
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text("Share result: ${file}"),
-      ));
-    }
+    //if (await Permission.storage.request().isGranted) {
+    File file = await File('$tempPath/$fileName.png');
+    file.writeAsBytesSync(_imageFile);
+    await Share.shareXFiles([XFile(file.path)]);
+    scaffoldMessenger.showSnackBar(SnackBar(
+      content: Text("Share result: ${file}"),
+    ));
+    //}
   }
 
   Future getPdf() async {
+    //  final boundary =
+    //     key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    // final image = await boundary?.toImage();
+    // final byteData = await image?.toByteData(format: ImageByteFormat.png);
+    
+    // final imageBytes = byteData?.buffer.asUint8List();
+
+
+
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final screenShot = (await screenshotController.capture())!;
     pw.Document pdf = pw.Document();
@@ -82,15 +105,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
         },
       ),
     );
-    String tempPath = (await getApplicationDocumentsDirectory()).path;
+    String tempPath = (Directory('/storage/emulated/0/Download')).path;
     String fileName = "mytransactionFile";
-    if (await Permission.storage.request().isGranted) {
-      File pdfFile = File('$tempPath/$fileName.pdf');
-      pdfFile.writeAsBytes(await pdf.save());
-      scaffoldMessenger.showSnackBar(SnackBar(
-        content: Text("File Saved: $pdfFile"),
-      ));
-    }
+    // if (await Permission.storage.request().isGranted) {
+    File pdfFile = File('$tempPath/$fileName.pdf');
+    pdfFile.writeAsBytes(await pdf.save());
+    scaffoldMessenger.showSnackBar(SnackBar(
+      content: Text("File Saved: $pdfFile"),
+    ));
+    log("File Saved: $pdfFile");
+    // }
   }
 
   List<TransactionModel> filteredTransactions = [];
@@ -99,8 +123,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
     filteredTransactions.clear();
     for (TransactionModel transaction
         in (widget.accountModel.transactions ?? <TransactionModel>[])) {
-      if (dateformat.parse(transaction.date?? '').isBefore(from) ||
-          dateformat.parse(transaction.date?? '').isAfter(to)) {
+      if (dateformat.parse(transaction.date ?? '').isBefore(from) ||
+          dateformat.parse(transaction.date ?? '').isAfter(to)) {
         continue;
       }
       filteredTransactions.add(transaction);
@@ -138,14 +162,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final difference = dateRange.duration.inDays;
-    final List<DateTime> filteredDates =
-        List<DateTime>.generate(difference, (index) {
-      DateTime date = dateRange.start;
+    //final difference = dateRange.duration.inDays;
+    // final List<DateTime> filteredDates =
+    //     List<DateTime>.generate(difference, (index) {
+    //   DateTime date = dateRange.start;
 
-      return date.add(Duration(days: index));
-    });
-    var theme=Theme.of(context);
+    //   return date.add(Duration(days: index));
+    // });
+    var theme = Theme.of(context);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: theme.colorScheme.background,
@@ -183,7 +207,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                           child: DateTextField(
                             controller: fromDate,
                             color: theme.colorScheme.primary,
-                             hintText: 'From',
+                            hintText: 'From',
                             onChanged: (p0) {
                               if (p0 != null && toDate.text.isNotEmpty) {
                                 filter(
@@ -209,14 +233,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 onPressed: () {
                                   filterDate();
                                 },
-                                icon: const Icon(Icons.filter_alt,
-                                    ))),
+                                icon: const Icon(
+                                  Icons.filter_alt,
+                                ))),
                         SizedBox(width: width * 0.01),
                         Expanded(
                           child: DateTextField(
                             controller: toDate,
                             color: theme.colorScheme.primary,
-                            
                             hintText: 'To',
                             onChanged: (p0) {
                               if (p0 != null && fromDate.text.isNotEmpty) {
@@ -240,225 +264,252 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: Container(
-                        decoration: const BoxDecoration(color: Colors.white),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.all(width * 0.03),
-                                  child: Text(
-                                      "${dateformat.format(DateTime.now())},  ${timeformat.format(DateTime.now())}")),
-                              Padding(
-                                padding: EdgeInsets.all(width * 0.05),
-                                child: Row(
+                    child: SingleChildScrollView(
+                      child: Screenshot(
+                        controller: screenshotController,
+                        child: Container(
+                          decoration: const BoxDecoration(color: Colors.white),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.all(width * 0.03),
+                                    child: Text(
+                                        "${dateformat.format(DateTime.now())},  ${timeformat.format(DateTime.now())}")),
+                                Padding(
+                                  padding: EdgeInsets.all(width * 0.05),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                            widget.accountModel.accountName!
+                                                .toTitleCase(),
+                                            style: headline1.copyWith(
+                                                fontSize: 20)),
+                                        Image.asset(
+                                          'assets/app-logo.png',
+                                          width: 10.h,
+                                        ),
+                                      ]),
+                                ),
+                                SizedBox(height: height * 0.03),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: width * 0.05),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.end,
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                          widget.accountModel.accountName!
-                                              .toTitleCase(),
-                                          style:
-                                              headline1.copyWith(fontSize: 20)),
-                                      Image.asset(
-                                        'assets/app-logo.png',
-                                        width: 10.h,
+                                      Expanded(
+                                        child: Text('Transactions',
+                                            style: headline1),
                                       ),
-                                    ]),
-                              ),
-                              SizedBox(height: height * 0.03),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.05),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text('Transactions',
-                                          style: headline1),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Total Credit:',
-                                                  style: bodyText1.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                  isFiltered
-                                                      ? 'GHS ${netIncome()}'
-                                                      : 'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).currentIncome.toStringAsFixed(2)}',
-                                                  style: bodyText1),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: height * 0.01,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Total Debit:',
-                                                  style: bodyText1.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                isFiltered
-                                                    ? 'GHS ${netExpense()}'
-                                                    : 'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).currentExpense.toStringAsFixed(2)}',
-                                                style: bodyText1,
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: height * 0.01,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Total Balance:',
-                                                  style: bodyText1.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                  'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
-                                                  style: bodyText1),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: height * 0.05),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: height * 0.01,
-                                    horizontal: width * 0.05),
-                                color: const Color.fromARGB(255, 197, 196, 196),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text('Items',
-                                            style: bodyText1.copyWith(
-                                                fontWeight: FontWeight.bold))),
-                                    Expanded(
-                                        child: Text('Date',
-                                            style: bodyText1.copyWith(
-                                                fontWeight: FontWeight.bold))),
-                                    Expanded(
-                                        child: Text('Transaction Type',
-                                            style: bodyText1.copyWith(
-                                                fontWeight: FontWeight.bold))),
-                                    Expanded(
-                                        child: Text('Amount',
-                                            textAlign: TextAlign.right,
-                                            style: bodyText1.copyWith(
-                                                fontWeight: FontWeight.bold))),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(width * 0.05),
-                                child: SizedBox(
-                                    // height: height * 0.7,
-                                    child: (context
-                                                .watch<TransactionProvider>()
-                                                .accountList
-                                                .singleWhere((element) =>
-                                                    element.accountName ==
-                                                    widget.accountModel
-                                                        .accountName)
-                                                .transactions ??= [])
-                                            .isEmpty
-                                        ? Center(
-                                            child: Column(
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Icon(
-                                                  Icons.mood_bad,
-                                                  color: primaryColor,
-                                                  size: 50,
-                                                ),
+                                                Text('Total Credit:',
+                                                    style: bodyText1.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 Text(
-                                                  'No Transactions',
-                                                  style: headline1,
-                                                ),
+                                                    isFiltered
+                                                        ? 'GHS ${netIncome()}'
+                                                        : 'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).currentIncome.toStringAsFixed(2)}',
+                                                    style: bodyText1),
                                               ],
                                             ),
-                                          )
-                                        : isFiltered
-                                            ? filteredTransactions.isEmpty
-                                                ? Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.mood_bad,
-                                                          color: primaryColor,
-                                                          size: 50,
-                                                        ),
-                                                        Text(
-                                                          'No Transactions Range',
-                                                          style: headline1,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : ListView(
+                                            SizedBox(
+                                              height: height * 0.01,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text('Total Debit:',
+                                                    style: bodyText1.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                  isFiltered
+                                                      ? 'GHS ${netExpense()}'
+                                                      : 'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).currentExpense.toStringAsFixed(2)}',
+                                                  style: bodyText1,
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: height * 0.01,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text('Total Balance:',
+                                                    style: bodyText1.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                    'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
+                                                    style: bodyText1),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: height * 0.05),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: height * 0.01,
+                                      horizontal: width * 0.05),
+                                  color: const Color.fromARGB(
+                                      255, 197, 196, 196),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: Text('Items',
+                                              style: bodyText1.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                      Expanded(
+                                          child: Text('Date',
+                                              style: bodyText1.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                      Expanded(
+                                          child: Text('Transaction Type',
+                                              style: bodyText1.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                      Expanded(
+                                          child: Text('Amount',
+                                              textAlign: TextAlign.right,
+                                              style: bodyText1.copyWith(
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(width * 0.05),
+                                  child: SizedBox(
+                                      // height: height * 0.7,
+                                      child: (context
+                                                  .watch<
+                                                      TransactionProvider>()
+                                                  .accountList
+                                                  .singleWhere((element) =>
+                                                      element.accountName ==
+                                                      widget.accountModel
+                                                          .accountName)
+                                                  .transactions ??= [])
+                                              .isEmpty
+                                          ? Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.mood_bad,
+                                                    color: primaryColor,
+                                                    size: 50,
+                                                  ),
+                                                  Text(
+                                                    'No Transactions',
+                                                    style: headline1,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : isFiltered
+                                              ? filteredTransactions.isEmpty
+                                                  ? Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.mood_bad,
+                                                            color:
+                                                                primaryColor,
+                                                            size: 50,
+                                                          ),
+                                                          Text(
+                                                            'No Transactions Range',
+                                                            style: headline1,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : ListView(
+                                                      reverse: true,
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          const NeverScrollableScrollPhysics(),
+                                                      children: List.generate(
+                                                          filteredTransactions
+                                                              .length,
+                                                          (index) =>
+                                                              SummaryListItem(
+                                                                item: filteredTransactions[
+                                                                        index]
+                                                                    .transactionItem!,
+                                                                date: filteredTransactions[
+                                                                        index]
+                                                                    .date!
+                                                                    .toString(),
+                                                                transactionType:
+                                                                    filteredTransactions[
+                                                                            index]
+                                                                        .isCredit!,
+                                                                amount: filteredTransactions[
+                                                                        index]
+                                                                    .price!
+                                                                    .toStringAsFixed(
+                                                                        2),
+                                                                expenseOrIncome:
+                                                                    filteredTransactions[
+                                                                            index]
+                                                                        .isCredit!,
+                                                              )))
+                                              : ListView(
                                                   reverse: true,
-                                                    shrinkWrap: true,
-                                                    physics:
-                                                        const NeverScrollableScrollPhysics(),
-                                                    children: List.generate(
-                                                        filteredTransactions
-                                                            .length,
-                                                        (index) =>
-                                                            SummaryListItem(
-                                                              item: filteredTransactions[
-                                                                      index]
-                                                                  .transactionItem!,
-                                                              date:
-                                                                  filteredTransactions[
-                                                                          index]
-                                                                      .date!.toString(),
-                                                              transactionType:
-                                                                  filteredTransactions[
-                                                                          index]
-                                                                      .isCredit!,
-                                                              amount: filteredTransactions[
-                                                                      index]
-                                                                  .price!
-                                                                  .toStringAsFixed(
-                                                                      2),
-                                                              expenseOrIncome:
-                                                                  filteredTransactions[
-                                                                          index]
-                                                                      .isCredit!,
-                                                            )))
-                                            : ListView(
-                                              reverse: true,
-                                                shrinkWrap: true,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                children: List.generate(
-                                                    (context
-                                                                .watch<
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  children: List.generate(
+                                                      (context
+                                                                  .watch<
+                                                                      TransactionProvider>()
+                                                                  .accountList
+                                                                  .singleWhere((element) =>
+                                                                      element
+                                                                          .accountName ==
+                                                                      widget
+                                                                          .accountModel
+                                                                          .accountName)
+                                                                  .transactions ??
+                                                              [])
+                                                          .length,
+                                                      (index) =>
+                                                          SummaryListItem(
+                                                            item: context
+                                                                .read<
                                                                     TransactionProvider>()
                                                                 .accountList
                                                                 .singleWhere((element) =>
@@ -467,96 +518,85 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                                     widget
                                                                         .accountModel
                                                                         .accountName)
-                                                                .transactions ??
-                                                            [])
-                                                        .length,
-                                                    (index) => SummaryListItem(
-                                                          item: context
-                                                              .read<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  widget
-                                                                      .accountModel
-                                                                      .accountName)
-                                                              .transactions![
-                                                                  index]
-                                                              .transactionItem!,
-                                                          date: context
-                                                              .read<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  widget
-                                                                      .accountModel
-                                                                      .accountName)
-                                                              .transactions![
-                                                                  index]
-                                                              .date!.toString(),
-                                                          transactionType: context
-                                                              .read<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  widget
-                                                                      .accountModel
-                                                                      .accountName)
-                                                              .transactions![
-                                                                  index]
-                                                              .isCredit!,
-                                                          amount: context
-                                                              .read<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  widget
-                                                                      .accountModel
-                                                                      .accountName)
-                                                              .transactions![
-                                                                  index]
-                                                              .price!
-                                                              .toStringAsFixed(
-                                                                  2),
-                                                          expenseOrIncome: context
-                                                              .read<
-                                                                  TransactionProvider>()
-                                                              .accountList
-                                                              .singleWhere((element) =>
-                                                                  element
-                                                                      .accountName ==
-                                                                  widget
-                                                                      .accountModel
-                                                                      .accountName)
-                                                              .transactions![
-                                                                  index]
-                                                              .isCredit!,
-                                                        )))),
-                              ),
-                              Divider(
-                                color: Colors.grey,
-                                height: height * 0.05,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.05),
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                      'Net Total:   GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
-                                      style: bodyText1.copyWith(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold)),
+                                                                .transactions![
+                                                                    index]
+                                                                .transactionItem!,
+                                                            date: context
+                                                                .read<
+                                                                    TransactionProvider>()
+                                                                .accountList
+                                                                .singleWhere((element) =>
+                                                                    element
+                                                                        .accountName ==
+                                                                    widget
+                                                                        .accountModel
+                                                                        .accountName)
+                                                                .transactions![
+                                                                    index]
+                                                                .date!
+                                                                .toString(),
+                                                            transactionType: context
+                                                                .read<
+                                                                    TransactionProvider>()
+                                                                .accountList
+                                                                .singleWhere((element) =>
+                                                                    element
+                                                                        .accountName ==
+                                                                    widget
+                                                                        .accountModel
+                                                                        .accountName)
+                                                                .transactions![
+                                                                    index]
+                                                                .isCredit!,
+                                                            amount: context
+                                                                .read<
+                                                                    TransactionProvider>()
+                                                                .accountList
+                                                                .singleWhere((element) =>
+                                                                    element
+                                                                        .accountName ==
+                                                                    widget
+                                                                        .accountModel
+                                                                        .accountName)
+                                                                .transactions![
+                                                                    index]
+                                                                .price!
+                                                                .toStringAsFixed(
+                                                                    2),
+                                                            expenseOrIncome: context
+                                                                .read<
+                                                                    TransactionProvider>()
+                                                                .accountList
+                                                                .singleWhere((element) =>
+                                                                    element
+                                                                        .accountName ==
+                                                                    widget
+                                                                        .accountModel
+                                                                        .accountName)
+                                                                .transactions![
+                                                                    index]
+                                                                .isCredit!,
+                                                          )))),
                                 ),
-                              )
-                            ]),
+                                Divider(
+                                  color: Colors.grey,
+                                  height: height * 0.05,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: width * 0.05),
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        'Net Total:  GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).currentExpense.toStringAsFixed(2)}',
+                                        //GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
+                                        style: bodyText1.copyWith(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                )
+                              ]),
+                        ),
                       ),
                     ),
                   )
@@ -569,11 +609,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     GestureDetector(
-                      onTap: () => shareImage(),
+                      onTap: () {
+                        shareImage();
+                      },
                       child: CircleAvatar(
                           radius: 25,
                           backgroundColor: theme.colorScheme.inversePrimary,
-                          child: const Icon(Icons.share, )),
+                          child: const Icon(
+                            Icons.share,
+                          )),
                     ),
                     SizedBox(height: height * 0.02),
                     GestureDetector(
@@ -581,8 +625,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       child: CircleAvatar(
                           radius: 25,
                           backgroundColor: theme.colorScheme.inversePrimary,
-                          child:
-                              const Icon(Icons.save_alt, )),
+                          child: const Icon(
+                            Icons.save_alt,
+                          )),
                     ),
                   ],
                 ),

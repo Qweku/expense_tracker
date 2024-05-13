@@ -6,12 +6,12 @@ class AccountCard extends StatelessWidget {
   final String accountName, balance;
   final Function()? onTap, onLongPress;
   const AccountCard({
-    Key? key,
+    super.key,
     required this.accountName,
     required this.balance,
     this.onTap,
     this.onLongPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class AccountCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'GHS',
                             ),
                             Text(balance, style: TextStyle(fontSize: 4.0.h)),
@@ -185,7 +185,7 @@ class BalanceCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('GHS',
+                      const Text('GHS',
                           ),
                       Text(balance,
                           style: TextStyle(

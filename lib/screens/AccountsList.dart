@@ -12,8 +12,8 @@ import 'package:expense_tracker/providers/TransactionProvider.dart';
 import 'package:expense_tracker/screens/Notification/notificationPlugin.dart';
 import 'package:expense_tracker/screens/Notification/notifications.dart';
 import 'package:expense_tracker/screens/Overview.dart';
-import 'package:expense_tracker/screens/widgets/bottomSheetWidget.dart';
-import 'package:expense_tracker/screens/widgets/cardWidgets.dart';
+import 'package:expense_tracker/screens/widgets/bottom_sheet_widget.dart';
+import 'package:expense_tracker/screens/widgets/card_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:localstorage/localstorage.dart';
@@ -86,7 +86,7 @@ class _AccountListState extends State<AccountList> {
                       error
                           ? Text('*Field Required',
                               style: bodyText1.copyWith(
-                                  color: Color.fromARGB(255, 252, 17, 0)))
+                                  color: const Color.fromARGB(255, 252, 17, 0)))
                           : Container(),
                       CustomTextField(
                         controller: accountName,
@@ -199,7 +199,7 @@ class _AccountListState extends State<AccountList> {
   onNotificationLower(ReceivedNotification receivedNotification) {}
   onNotificationClick(String payload) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return NotificationScreen();
+      return const NotificationScreen();
     }));
   }
 
@@ -363,7 +363,7 @@ class _AccountListState extends State<AccountList> {
   }
 
   _backButton(context) {
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(
@@ -371,12 +371,12 @@ class _AccountListState extends State<AccountList> {
                   borderRadius: BorderRadius.circular(20)),
               content: SizedBox(
                 height: height * 0.1,
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(Icons.warning_amber_outlined,
+                    Icon(Icons.warning_amber_outlined,
                         size: 40, color: Color.fromARGB(255, 255, 38, 23)),
-                    const SizedBox(
+                    SizedBox(
                       height: 30,
                     ),
                     Text(
@@ -409,7 +409,6 @@ class _AccountListState extends State<AccountList> {
     final theme = Theme.of(context);
     double height = MediaQuery.of(context).size.height;
     showModalBottomSheet(
-        backgroundColor: Colors.grey[900],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),

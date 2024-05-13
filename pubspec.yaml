@@ -49,12 +49,12 @@ dependencies:
   permission_handler: 
   pdf:
   sizer: ^2.0.15
-  fl_chart: ^0.67.0
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.2
+  flutter_lints: ^4.0.0
   flutter_launcher_icons:
 
 flutter_launcher_icons:
