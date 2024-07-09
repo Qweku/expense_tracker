@@ -3,10 +3,10 @@ import 'package:expense_tracker/components/constants.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/models/NotificationModel.dart';
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
+// import 'package:localstorage/localstorage.dart';
 
 class TransactionProvider with ChangeNotifier {
-  LocalStorage storage = LocalStorage('accountList');
+  // LocalStorage storage = LocalStorage('accountList');
   int _notiCount = 0;
   List<NotificationModel> _notificationList = [];
   List<AccountModel> _accountList = [];

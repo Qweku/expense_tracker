@@ -1,23 +1,25 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'dart:io';
+// import 'dart:math';
 import 'dart:ui';
 
 import 'package:expense_tracker/components/constants.dart';
-import 'package:expense_tracker/components/screen_capture.dart';
+// import 'package:expense_tracker/components/screen_capture.dart';
 import 'package:expense_tracker/components/textField-widget.dart';
 import 'package:expense_tracker/models/Models.dart';
 import 'package:expense_tracker/providers/TransactionProvider.dart';
+import 'package:expense_tracker/screens/PDFViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:typed_data';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+// import 'package:pdf/pdf.dart';
+// import 'package:pdf/widgets.dart' as pw;
 import 'package:sizer/sizer.dart';
 
 class SummaryScreen extends StatefulWidget {
@@ -34,7 +36,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
   TextEditingController toDate = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
   final key = GlobalKey();
- 
 
   DateTime? startDate;
   DateTime? endDate;
@@ -64,16 +65,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
     //     key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     // final image = await boundary?.toImage();
     // final byteData = await image?.toByteData(format: ImageByteFormat.png);
-    
+
     // final imageBytes = byteData?.buffer.asUint8List();
 
-    String tempPath = (Directory('/storage/emulated/0/Download')).path;
+    String tempPath =
+        (await getApplicationDocumentsDirectory ()).path; //(Directory('/storage/emulated/0/Download')).path;
     String fileName = "TransactionFile";
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     Uint8List _imageFile = (await screenshotController.capture())!;
 
     //if (await Permission.storage.request().isGranted) {
-    File file = await File('$tempPath/$fileName.png');
+    File file = File('$tempPath/$fileName.png');
     file.writeAsBytesSync(_imageFile);
     await Share.shareXFiles([XFile(file.path)]);
     scaffoldMessenger.showSnackBar(SnackBar(
@@ -82,40 +84,44 @@ class _SummaryScreenState extends State<SummaryScreen> {
     //}
   }
 
-  Future getPdf() async {
-    //  final boundary =
-    //     key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-    // final image = await boundary?.toImage();
-    // final byteData = await image?.toByteData(format: ImageByteFormat.png);
-    
-    // final imageBytes = byteData?.buffer.asUint8List();
+  // Future getPdf() async {
+  //   //  final boundary =
+  //   //     key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+  //   // final image = await boundary?.toImage();
+  //   // final byteData = await image?.toByteData(format: ImageByteFormat.png);
 
+  //   // final imageBytes = byteData?.buffer.asUint8List();
 
+  //   final scaffoldMessenger = ScaffoldMessenger.of(context);
+  //   final screenShot = (await screenshotController.capture())!;
+  //   pw.Document pdf = pw.Document();
+  //   pdf.addPage(
+  //     pw.Page(
+  //       pageFormat: PdfPageFormat.a4,
+  //       build: (context) {
+  //         return pw.Expanded(
+  //             child: pw.SizedBox(
+  //                 width: double.infinity,
+  //                 child: pw.FittedBox(
+  //                     child: pw.Image(pw.MemoryImage(screenShot),
+  //                         fit: pw.BoxFit.contain))));
+  //       },
+  //     ),
+  //   );
+  //   int rand = Random().nextInt(1000);
+  //   String tempPath = (Directory('/storage/emulated/0/Download')).path;
+  //   String fileName = "mytransactionFile_$rand";
+  //   // if (await Permission.storage.request().isGranted) {
+  //   File pdfFile = File('$tempPath/$fileName.pdf');
 
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final screenShot = (await screenshotController.capture())!;
-    pw.Document pdf = pw.Document();
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (context) {
-          return pw.Expanded(
-              child:
-                  pw.Image(pw.MemoryImage(screenShot), fit: pw.BoxFit.contain));
-        },
-      ),
-    );
-    String tempPath = (Directory('/storage/emulated/0/Download')).path;
-    String fileName = "mytransactionFile";
-    // if (await Permission.storage.request().isGranted) {
-    File pdfFile = File('$tempPath/$fileName.pdf');
-    pdfFile.writeAsBytes(await pdf.save());
-    scaffoldMessenger.showSnackBar(SnackBar(
-      content: Text("File Saved: $pdfFile"),
-    ));
-    log("File Saved: $pdfFile");
-    // }
-  }
+  //   pdfFile.writeAsBytes(await pdf.save());
+
+  //   scaffoldMessenger.showSnackBar(SnackBar(
+  //     content: Text("File Saved: $pdfFile"),
+  //   ));
+  //  // log("File Saved: $pdfFile");
+  //   // }
+  // }
 
   List<TransactionModel> filteredTransactions = [];
   bool isFiltered = false;
@@ -162,6 +168,29 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<TransactionModel> transactions =
+        Provider.of<TransactionProvider>(context)
+                .accountList
+                .singleWhere((element) =>
+                    element.accountName == widget.accountModel.accountName)
+                .transactions ??
+            [];
+
+    double tB = Provider.of<TransactionProvider>(context)
+        .accountList
+        .singleWhere((element) =>
+            element.accountName == widget.accountModel.accountName!)
+        .remainingBalance;
+    double cI = Provider.of<TransactionProvider>(context)
+        .accountList
+        .singleWhere((element) =>
+            element.accountName == widget.accountModel.accountName!)
+        .currentIncome;
+    double cE = Provider.of<TransactionProvider>(context)
+        .accountList
+        .singleWhere((element) =>
+            element.accountName == widget.accountModel.accountName!)
+        .currentExpense;
     //final difference = dateRange.duration.inDays;
     // final List<DateTime> filteredDates =
     //     List<DateTime>.generate(difference, (index) {
@@ -268,12 +297,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       child: Screenshot(
                         controller: screenshotController,
                         child: Container(
+                          padding: EdgeInsets.only(bottom: 3.h),
                           decoration: const BoxDecoration(color: Colors.white),
                           child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              //crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                    padding: EdgeInsets.all(width * 0.03),
+                                    padding: EdgeInsets.all(5.w),
                                     child: Text(
                                         "${dateformat.format(DateTime.now())},  ${timeformat.format(DateTime.now())}")),
                                 Padding(
@@ -293,13 +323,26 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                         ),
                                       ]),
                                 ),
-                                SizedBox(height: height * 0.03),
+                                // SizedBox(height:3.h),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('Total Balance',
+                                        style: bodyText1.copyWith(
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                        'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
+                                        style:
+                                            bodyText1.copyWith(fontSize: 3.h)),
+                                  ],
+                                ),
+                                SizedBox(height: 3.h),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: width * 0.05),
                                   child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
@@ -351,20 +394,20 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                             SizedBox(
                                               height: height * 0.01,
                                             ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text('Total Balance:',
-                                                    style: bodyText1.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                                Text(
-                                                    'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
-                                                    style: bodyText1),
-                                              ],
-                                            ),
+                                            // Row(
+                                            //   mainAxisAlignment:
+                                            //       MainAxisAlignment
+                                            //           .spaceBetween,
+                                            //   children: [
+                                            //     Text('Total Balance:',
+                                            //         style: bodyText1.copyWith(
+                                            //             fontWeight:
+                                            //                 FontWeight.bold)),
+                                            //     Text(
+                                            //         'GHS ${context.watch<TransactionProvider>().accountList.singleWhere((element) => element.accountName == widget.accountModel.accountName!).remainingBalance.toStringAsFixed(2)}',
+                                            //         style: bodyText1),
+                                            //   ],
+                                            // ),
                                           ],
                                         ),
                                       ),
@@ -376,8 +419,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   padding: EdgeInsets.symmetric(
                                       vertical: height * 0.01,
                                       horizontal: width * 0.05),
-                                  color: const Color.fromARGB(
-                                      255, 197, 196, 196),
+                                  color:
+                                      const Color.fromARGB(255, 197, 196, 196),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -409,8 +452,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   child: SizedBox(
                                       // height: height * 0.7,
                                       child: (context
-                                                  .watch<
-                                                      TransactionProvider>()
+                                                  .watch<TransactionProvider>()
                                                   .accountList
                                                   .singleWhere((element) =>
                                                       element.accountName ==
@@ -425,7 +467,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                 children: [
                                                   Icon(
                                                     Icons.mood_bad,
-                                                    color: primaryColor,
+                                                    color: theme.colorScheme
+                                                        .inversePrimary,
                                                     size: 50,
                                                   ),
                                                   Text(
@@ -445,8 +488,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                                         children: [
                                                           Icon(
                                                             Icons.mood_bad,
-                                                            color:
-                                                                primaryColor,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .inversePrimary,
                                                             size: 50,
                                                           ),
                                                           Text(
@@ -621,7 +665,27 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     ),
                     SizedBox(height: height * 0.02),
                     GestureDetector(
-                      onTap: getPdf,
+                      onTap: () {
+                        final accModel = AccountModel(
+                            accountName: widget.accountModel.accountName,
+                            balance: widget.accountModel.balance,
+                            transactions: transactions);
+                        double totalBalance = tB;
+                        double currentIncome = cI;
+
+                        double currentExpense = cE;
+                        final expns = Expense(accountModel: accModel,
+                         currentExpense: currentExpense.toString(), 
+                         currentIncome: currentIncome.toString(), 
+                         totalBalance: totalBalance.toString());
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PdfViewer(
+                                     expense: expns,
+                                    )));
+                      },
                       child: CircleAvatar(
                           radius: 25,
                           backgroundColor: theme.colorScheme.inversePrimary,

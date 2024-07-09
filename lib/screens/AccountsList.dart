@@ -34,17 +34,17 @@ class _AccountListState extends State<AccountList> {
   TextEditingController balance = TextEditingController();
   bool error = false;
   bool isEdit = false;
-  LocalStorage storage = LocalStorage('accounts');
+  // LocalStorage storage = LocalStorage('accounts');
   _addAccount(int index) async {
     await Future.delayed(const Duration(milliseconds: 100));
     return showDialog<bool>(
         barrierDismissible: false,
         context: context,
         builder: (c) => StatefulBuilder(builder: (context, setState) {
-              var theme=Theme.of(context);
+              var theme = Theme.of(context);
               return AlertDialog(
                 insetPadding: EdgeInsets.symmetric(horizontal: 3.w),
-                 shape: RoundedRectangleBorder(
+                shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 content: SizedBox(
                   height: 40.h,
@@ -57,9 +57,9 @@ class _AccountListState extends State<AccountList> {
                         children: [
                           Text(isEdit ? 'Edit Account' : 'Add Account',
                               style: TextStyle(
-                                  letterSpacing: 2,
-                                  fontSize: 2.0.h,
-                                  )),
+                                letterSpacing: 2,
+                                fontSize: 2.0.h,
+                              )),
                           SizedBox(height: height * 0.01),
                           //Divider
                           Row(
@@ -67,17 +67,20 @@ class _AccountListState extends State<AccountList> {
                             children: [
                               SizedBox(
                                 width: 20.w,
-                                child: Divider(color: theme.colorScheme.primary),
+                                child:
+                                    Divider(color: theme.colorScheme.primary),
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: height * 0.01),
                                 child: Icon(Icons.edit,
-                                    color: theme.colorScheme.inversePrimary, size: 20),
+                                    color: theme.colorScheme.inversePrimary,
+                                    size: 20),
                               ),
                               SizedBox(
                                 width: 20.w,
-                                child: Divider(color: theme.colorScheme.primary),
+                                child:
+                                    Divider(color: theme.colorScheme.primary),
                               )
                             ],
                           ),
@@ -91,7 +94,7 @@ class _AccountListState extends State<AccountList> {
                       CustomTextField(
                         controller: accountName,
                         borderColor: theme.colorScheme.primary,
-                         hintText: 'Account Name',
+                        hintText: 'Account Name',
                         prefixIcon: Icon(
                           Icons.credit_card,
                           color: theme.colorScheme.tertiary,
@@ -165,7 +168,7 @@ class _AccountListState extends State<AccountList> {
                             await notificationPlugin.showNotification(
                                 notiModel.title!, notiModel.body!);
 
-                            await storage.setItem(
+                             localStorage.setItem(
                                 'notifList',
                                 notificationModelToJson(
                                     Provider.of<TransactionProvider>(context,
@@ -173,7 +176,7 @@ class _AccountListState extends State<AccountList> {
                                         .notificationList));
                             context.read<TransactionProvider>().notiCount = 1;
                           }
-                          await storage.setItem(
+                           localStorage.setItem(
                               'accountList',
                               accountModelToJson(
                                   Provider.of<TransactionProvider>(context,
@@ -187,7 +190,7 @@ class _AccountListState extends State<AccountList> {
                         }
                       },
                       width: 100.w,
-                      buttonText: isEdit?'Done':'Add',
+                      buttonText: isEdit ? 'Done' : 'Add',
                       color: theme.colorScheme.inversePrimary,
                     ),
                   )
@@ -204,13 +207,14 @@ class _AccountListState extends State<AccountList> {
   }
 
   void bootUp() async {
-    if (await storage.ready) {
+    await initLocalStorage().then((_) {
       Provider.of<TransactionProvider>(context, listen: false).accountList =
-          accountModelFromJson(storage.getItem('accountList') ?? '[]');
+          accountModelFromJson(localStorage.getItem('accountList') ?? '[]');
       Provider.of<TransactionProvider>(context, listen: false)
               .notificationList =
-          notificationModelFromJson(storage.getItem('notifList') ?? '[]');
-    }
+          notificationModelFromJson(localStorage.getItem('notifList') ?? '[]');
+    });
+   
   }
 
   @override
@@ -224,7 +228,7 @@ class _AccountListState extends State<AccountList> {
 
   @override
   Widget build(BuildContext context) {
-    var theme=Theme.of(context);
+    var theme = Theme.of(context);
     return WillPopScope(
       onWillPop: () => _backButton(context),
       child: Scaffold(
@@ -270,7 +274,6 @@ class _AccountListState extends State<AccountList> {
                   width: width,
                   color: theme.colorScheme.primary,
                 ),
-                
               ],
             ),
             Padding(
@@ -381,7 +384,6 @@ class _AccountListState extends State<AccountList> {
                     ),
                     Text(
                       "Do you really want to exit?",
-                      
                     ),
                   ],
                 ),

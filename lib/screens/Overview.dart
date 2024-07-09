@@ -40,7 +40,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   bool error = false;
   bool isEdit = false;
   String expenseOrIncome = 'debit';
-  LocalStorage storage = LocalStorage('accounts');
+  // LocalStorage storage = LocalStorage('accounts');
   bool timerHasStarted = false;
   TextEditingController itemName = TextEditingController();
   TextEditingController amount = TextEditingController();
@@ -477,7 +477,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                     listen: false)
                                 .addTransaction(widget.accountModel!, trxn);
 
-                            await storage.setItem(
+                             localStorage.setItem(
                                 'accountList',
                                 accountModelToJson(
                                     Provider.of<TransactionProvider>(context,
@@ -517,7 +517,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                                     listen: false)
                                 .addTransaction(widget.accountModel!, trxn);
 
-                            await storage.setItem(
+                            localStorage.setItem(
                                 'accountList',
                                 accountModelToJson(
                                     Provider.of<TransactionProvider>(context,
@@ -613,7 +613,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     final theme = Theme.of(context);
     double height = MediaQuery.of(context).size.height;
     showModalBottomSheet(
-        backgroundColor: Colors.grey[900],
+        //backgroundColor: Colors.grey[900],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
